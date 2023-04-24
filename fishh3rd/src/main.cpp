@@ -12,6 +12,53 @@
 
 using namespace glimac;
 
+
+
+class Fish {
+    private:
+        glm::vec3 m_position;
+        glm::vec3 m_angle;
+        double m_speed;
+        double m_size;
+        Sphere m_shape;
+
+    public:
+        unsigned int id;
+
+        Fish();
+        Fish(glm::vec3 position, glm::vec3 angle, double speed, double size, const Sphere &shape, unsigned int id) : m_position(position), m_angle(angle), m_speed(speed), m_size(size), m_shape(shape), id(id) {}
+        ~Fish() = default;
+        
+        glm::vec3 position() {return this->m_position;};
+        void position(glm::vec3 newPosition) {m_position = newPosition;};
+        glm::vec3 angle() {return this->m_angle;};
+        void angle(glm::vec3 newAngle) {m_angle = newAngle;};
+        double speed() {return this->m_speed;};
+        void speed(double newSpeed) {m_speed = newSpeed;};
+        double size() {return this->m_size;};
+        void size(double newSize) {m_size = newSize;};
+        Sphere shape() {return this->m_shape;};
+        void shape(Sphere newShape) {m_shape = newShape;};
+
+        //void move();
+        //void turn();
+        //void draw();
+};
+
+std::vector<Fish> createHerd(const unsigned int fishNumber) {
+    std::vector<Fish> fishherd;
+    for (unsigned int i = 0; i < fishNumber; ++i) {
+        double size = 0.1;
+        glm::vec3 position = glm::vec3(glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size));
+        std::cout << position << std::endl;
+        glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
+        double speed = 1;
+        Sphere shape = Sphere(1.0f, 32, 16);
+        fishherd.push_back(Fish(position, angle, speed, size, shape, i));
+    }
+    return fishherd;
+}
+
 int main(int argc, char** argv) {
 
     // Initialize SDL and open a window
@@ -59,7 +106,7 @@ int main(int argc, char** argv) {
         // Initialize shaderss
         FilePath applicationPath(argv[0]);
         Program program = loadProgram(applicationPath.dirPath() + "shaders/3D.vs.glsl",
-                                    applicationPath.dirPath() + "shaders/tex3D.fs.glsl");
+                                    applicationPath.dirPath() + "shaders/normals.fs.glsl");
         program.use();
 
         // Initilize Uniform Variables
@@ -83,7 +130,7 @@ int main(int argc, char** argv) {
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
             Sphere sphere=Sphere(1,32,16);
             glBufferData(GL_ARRAY_BUFFER, sphere.getVertexCount() * sizeof(ShapeVertex), sphere.getDataPointer(), GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);    
 
         GLuint vao;
         glGenVertexArrays(1, &vao);
@@ -126,6 +173,8 @@ int main(int argc, char** argv) {
         startPosition.push_back(glm::vec3(glm::linearRand(-3.f, 3.f), glm::linearRand(-3.f, 3.f), glm::linearRand(-3.f, 3.f)));
     }
 
+    std::vector<Fish> fishherd = createHerd(40);
+
     // Application loop:
     bool done = false;
     while(!done) {
@@ -150,6 +199,8 @@ int main(int argc, char** argv) {
                     // On voit du coté négatif des Z par défaut en OpenGL
                 glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
+
+                /*
                 MVMatrix = glm::rotate(MVMatrix, windowManager.getTime(), glm::vec3(0, 1, 0));
 
                 // envoi des matrices au GPU.
@@ -167,7 +218,7 @@ int main(int argc, char** argv) {
 
                     MVMatrix = glm::rotate(MVMatrix, windowManager.getTime(), axes[i]);
                     MVMatrix = glm::translate(MVMatrix, startPosition[i]);
-                    MVMatrix = glm::scale(MVMatrix, glm::vec3(.2, .2, .2));
+                    MVMatrix = glm::scale(MVMatrix, glm::vec3(.1, .1, .1));
                     MVMatrix = glm::rotate(MVMatrix, -windowManager.getTime(), axes[i]);
 
                     glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
@@ -178,6 +229,21 @@ int main(int argc, char** argv) {
                         glUniform1i(mapLocation, 0);
                         glDrawArrays(GL_TRIANGLES, 0, sphere.getVertexCount());
                     glBindTexture(GL_TEXTURE_2D, 0);
+                }
+                */
+
+                for (Fish &fish : fishherd) {
+                    glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));
+
+                    MVMatrix = glm::translate(MVMatrix, fish.angle()*(windowManager.getTime()+1));
+                    // MVMatrix = glm::translate(MVMatrix, fish.angle());
+                    MVMatrix = glm::scale(MVMatrix, glm::vec3(fish.size(), fish.size(), fish.size()));
+
+                    glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+                    glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
+                    glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));    
+
+                    glDrawArrays(GL_TRIANGLES, 0, fish.shape().getVertexCount());
                 }
 
 
