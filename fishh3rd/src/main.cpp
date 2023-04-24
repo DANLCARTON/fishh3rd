@@ -9,6 +9,7 @@
 #include <glimac/Program.hpp>
 #include <glimac/FilePath.hpp>
 #include <glimac/Image.hpp>
+#include <math.h>
 
 using namespace glimac;
 
@@ -41,9 +42,35 @@ class Fish {
         void shape(Sphere newShape) {m_shape = newShape;};
 
         glm::mat4 move(glm::mat4 MVMatrix, const SDLWindowManager &wm);
-        //void turn();
+        glm::mat4 turn(int axis, glm::mat4 MVMatrix, const SDLWindowManager &wm);
         //void draw();
 };
+
+
+
+
+
+
+
+
+
+
+double getAngle(double a, double b) {   
+    //std::cout << a <<" " << b << std::endl;
+    //std::cout << std::asin(a) <<" " << std::acos(b) << std::endl;
+    if (b > 0) {
+        return std::acos(a);
+    } else {
+        return -std::acos(a);
+    }
+}
+
+
+
+
+
+
+
 
 std::vector<Fish> createHerd(const unsigned int fishNumber) {
     std::vector<Fish> fishherd;
@@ -51,8 +78,9 @@ std::vector<Fish> createHerd(const unsigned int fishNumber) {
         double size = 0.1;
         glm::vec3 position = glm::vec3(glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size));
         // std::cout << position << std::endl;
-        glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
-        double speed = 1;
+        //glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
+        glm::vec3 angle = glm::vec3(1, 0, 0);
+        double speed = .1;
         Sphere shape = Sphere(1.0f, 32, 16);
         fishherd.push_back(Fish(position, angle, speed, size, shape, i));
     }
@@ -61,8 +89,42 @@ std::vector<Fish> createHerd(const unsigned int fishNumber) {
 
 glm::mat4 Fish::move(glm::mat4 MVMatrix, const SDLWindowManager &wm) {
     MVMatrix = glm::translate(MVMatrix, this->angle()*(wm.getTime()+1));
+    this->position(this->position()+this->angle());
     return MVMatrix;
 }
+
+glm::mat4 Fish::turn(int axis, glm::mat4 MVMatrix, const SDLWindowManager &wm) {
+
+    glm::vec3 newAngle;
+
+
+    if (axis == 1) {
+        double angle = getAngle(this->angle()[0], this->angle()[1]);
+        angle += .5;
+        //std::cout << angle << std::endl;
+        newAngle = glm::vec3(std::cos(angle), std::sin(angle), 0);
+    } else if (axis == 2) {
+        double angle = getAngle(this->angle()[0], this->angle()[2]);
+        angle += .05;
+        //std::cout << angle << std::endl;
+        newAngle = glm::vec3(std::cos(angle), 0, std::sin(angle));
+    } else {
+        newAngle = glm::vec3(0, 0, 0);
+    }
+
+
+    this->m_angle = newAngle;
+    return MVMatrix;
+}
+
+
+
+
+
+
+
+
+
 
 int main(int argc, char** argv) {
 
@@ -89,6 +151,7 @@ int main(int argc, char** argv) {
         glEnable(GL_DEPTH_TEST);
 
         // textures
+        /*
         std::unique_ptr<Image> earthMap = loadImage("../assets/textures/EarthMap.jpg");
         GLuint earth;
         glGenTextures(1, &earth);
@@ -106,7 +169,7 @@ int main(int argc, char** argv) {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, 0);
-
+*/
 
         // Initialize shaderss
         FilePath applicationPath(argv[0]);
@@ -167,18 +230,7 @@ int main(int argc, char** argv) {
         
     /*********************************/
 
-
-    // Position et axe de rotation aléatoires pour les lunes.
-    std::vector<glm::vec3> axes;
-    for (size_t i = 0; i < 32; ++i) {
-        axes.push_back(glm::sphericalRand(1.f));
-    }
-    std::vector<glm::vec3> startPosition;
-    for (size_t i = 0; i < 32; ++i) {
-        startPosition.push_back(glm::vec3(glm::linearRand(-3.f, 3.f), glm::linearRand(-3.f, 3.f), glm::linearRand(-3.f, 3.f)));
-    }
-
-    std::vector<Fish> fishherd = createHerd(40);
+    std::vector<Fish> fishherd = createHerd(1);
 
     // Application loop:
     bool done = false;
@@ -240,15 +292,25 @@ int main(int argc, char** argv) {
                 for (Fish &fish : fishherd) {
                     glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));
 
+                    
+                    
+                    MVMatrix = fish.turn(1, MVMatrix, windowManager);
+                    
+                    
                     MVMatrix = fish.move(MVMatrix, windowManager);
-                    // MVMatrix = glm::translate(MVMatrix, fish.angle());
+
                     MVMatrix = glm::scale(MVMatrix, glm::vec3(fish.size(), fish.size(), fish.size()));
+
+
 
                     glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
                     glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
                     glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));    
 
                     glDrawArrays(GL_TRIANGLES, 0, fish.shape().getVertexCount());
+
+                    std::cout << fish.angle() << std::endl;
+                    std::cout << fish.position() << std::endl;
                 }
 
 
@@ -263,7 +325,7 @@ int main(int argc, char** argv) {
        // RESSOURCES RELEASE
         glDeleteBuffers(1,&vbo);
         glDeleteVertexArrays(1,&vao);
-        glDeleteTextures(1, &earth);
+        // glDeleteTextures(1, &earth);
     /*********************************/
 
     return EXIT_SUCCESS;
