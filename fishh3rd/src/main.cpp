@@ -40,7 +40,7 @@ class Fish {
         Sphere shape() {return this->m_shape;};
         void shape(Sphere newShape) {m_shape = newShape;};
 
-        //void move();
+        glm::mat4 move(glm::mat4 MVMatrix, const SDLWindowManager &wm);
         //void turn();
         //void draw();
 };
@@ -50,13 +50,18 @@ std::vector<Fish> createHerd(const unsigned int fishNumber) {
     for (unsigned int i = 0; i < fishNumber; ++i) {
         double size = 0.1;
         glm::vec3 position = glm::vec3(glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size));
-        std::cout << position << std::endl;
+        // std::cout << position << std::endl;
         glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
         double speed = 1;
         Sphere shape = Sphere(1.0f, 32, 16);
         fishherd.push_back(Fish(position, angle, speed, size, shape, i));
     }
     return fishherd;
+}
+
+glm::mat4 Fish::move(glm::mat4 MVMatrix, const SDLWindowManager &wm) {
+    MVMatrix = glm::translate(MVMatrix, this->angle()*(wm.getTime()+1));
+    return MVMatrix;
 }
 
 int main(int argc, char** argv) {
@@ -235,7 +240,7 @@ int main(int argc, char** argv) {
                 for (Fish &fish : fishherd) {
                     glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));
 
-                    MVMatrix = glm::translate(MVMatrix, fish.angle()*(windowManager.getTime()+1));
+                    MVMatrix = fish.move(MVMatrix, windowManager);
                     // MVMatrix = glm::translate(MVMatrix, fish.angle());
                     MVMatrix = glm::scale(MVMatrix, glm::vec3(fish.size(), fish.size(), fish.size()));
 
