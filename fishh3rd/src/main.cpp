@@ -44,7 +44,7 @@ class Fish {
 
         glm::mat4 move(glm::mat4 MVMatrix, const SDLWindowManager &wm);
         glm::mat4 turn(int axis, glm::mat4 MVMatrix, const SDLWindowManager &wm);
-        //void draw();
+        void draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation);
 };
 
 double getAngle(double a, double b) {   
@@ -99,6 +99,19 @@ glm::mat4 Fish::turn(int axis, glm::mat4 MVMatrix, const SDLWindowManager &wm) {
 
     this->m_angle = newAngle;
     return MVMatrix;
+}
+
+void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation) {
+
+    MVMatrix = glm::scale(MVMatrix, glm::vec3(this->size(), this->size(), this->size()));
+    MVMatrix = glm::translate(MVMatrix, this->position());
+    MVMatrix = glm::rotate(MVMatrix, 1.f, this->angle());
+
+    glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+    glUniformMatrix4fv(uMVProjMatrixLocarion, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
+    glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));    
+
+    glDrawArrays(GL_TRIANGLES, 0, this->shape().getVertexCount());
 }
 
 
@@ -299,20 +312,11 @@ int main(int argc, char** argv) {
 
                     for (Fish &otherFish : fishherd) {
                         if (fish.id != otherFish.id) {
-                            std::cout << distance(fish, otherFish) << std::endl;
+                            ;
                         }
                     }
 
-
-                    MVMatrix = glm::scale(MVMatrix, glm::vec3(fish.size(), fish.size(), fish.size()));
-                    MVMatrix = glm::translate(MVMatrix, fish.position());
-                    MVMatrix = glm::rotate(MVMatrix, 1.f, fish.angle());
-
-                    glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
-                    glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
-                    glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));    
-
-                    glDrawArrays(GL_TRIANGLES, 0, fish.shape().getVertexCount());
+                    fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation);
 
                     //std::cout << fish.angle() << std::endl;
                     //std::cout << fish.position() << std::endl;
