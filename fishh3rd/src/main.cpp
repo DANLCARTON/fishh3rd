@@ -11,7 +11,7 @@
 #include <glimac/Image.hpp>
 #include <math.h>
 
-const unsigned int FISH_NUMBER = 1;
+const unsigned int FISH_NUMBER = 2;
 const int AREA = 20;
 
 using namespace glimac;
@@ -113,6 +113,15 @@ void passTrough(Fish &fish) {
     if (fish.position()[2] >= AREA || fish.position()[2] <= -AREA) {
         fish.position(glm::vec3(fish.position()[0], fish.position()[1], -fish.position()[2]));
     }
+}
+
+
+double distance(Fish &fish, Fish &otherFish) {
+    double distanceX = otherFish.position()[0] - fish.position()[0];
+    double distanceY = otherFish.position()[1] - fish.position()[1];
+    double distanceZ = otherFish.position()[2] - fish.position()[2];
+    double distance = std::sqrt(distanceX*distanceX + distanceY*distanceY + distanceZ*distanceZ);
+    return distance;
 }
 
 int main(int argc, char** argv) {
@@ -287,10 +296,17 @@ int main(int argc, char** argv) {
 
                     passTrough(fish);
                     
+
+                    for (Fish &otherFish : fishherd) {
+                        if (fish.id != otherFish.id) {
+                            std::cout << distance(fish, otherFish) << std::endl;
+                        }
+                    }
+
+
                     MVMatrix = glm::scale(MVMatrix, glm::vec3(fish.size(), fish.size(), fish.size()));
                     MVMatrix = glm::translate(MVMatrix, fish.position());
                     MVMatrix = glm::rotate(MVMatrix, 1.f, fish.angle());
-
 
                     glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
                     glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
@@ -299,7 +315,7 @@ int main(int argc, char** argv) {
                     glDrawArrays(GL_TRIANGLES, 0, fish.shape().getVertexCount());
 
                     //std::cout << fish.angle() << std::endl;
-                    std::cout << fish.position() << std::endl;
+                    //std::cout << fish.position() << std::endl;
                 }
 
 
