@@ -11,8 +11,10 @@
 #include <glimac/Image.hpp>
 #include <math.h>
 
-const unsigned int FISH_NUMBER = 2;
-const int AREA = 20;
+//                                                         BEST VALUES
+const unsigned int FISH_NUMBER = 2; //                     ?
+const int AREA = 20; //                                    20
+const double TURN_FACTOR = .01; //                         0.01
 
 using namespace glimac;
 
@@ -43,7 +45,7 @@ class Fish {
         void shape(Sphere newShape) {m_shape = newShape;};
 
         glm::mat4 move(glm::mat4 MVMatrix, const SDLWindowManager &wm);
-        glm::mat4 turn(int axis, glm::mat4 MVMatrix, const SDLWindowManager &wm);
+        glm::mat4 turn(int axis, glm::mat4 MVMatrix, const SDLWindowManager &wm, int dir);
         void draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation);
 };
 
@@ -78,18 +80,18 @@ glm::mat4 Fish::move(glm::mat4 MVMatrix, const SDLWindowManager &wm) {
     return MVMatrix;
 }
 
-glm::mat4 Fish::turn(int axis, glm::mat4 MVMatrix, const SDLWindowManager &wm) {
+glm::mat4 Fish::turn(int axis, glm::mat4 MVMatrix, const SDLWindowManager &wm, int dir) {
 
     glm::vec3 newAngle;
 
     if (axis == 1) {
         double angle = getAngle(this->angle()[0], this->angle()[1]);
-        angle += .01;
+        angle += TURN_FACTOR*dir;
         //std::cout << angle << std::endl;
         newAngle = glm::vec3(std::cos(angle), std::sin(angle), 0);
     } else if (axis == 2) {
         double angle = getAngle(this->angle()[0], this->angle()[2]);
-        angle += .01;
+        angle += TURN_FACTOR*dir;
         //std::cout << angle << std::endl;
         newAngle = glm::vec3(std::cos(angle), 0, std::sin(angle));
     } else {
@@ -301,12 +303,11 @@ int main(int argc, char** argv) {
                 */
 
                 for (Fish &fish : fishherd) {
+
                     glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));                   
                     
                     MVMatrix = fish.move(MVMatrix, windowManager);
-
-                    // MVMatrix = fish.turn(fish.id%2+1, MVMatrix, windowManager);
-
+                    // MVMatrix = fish.turn(fish.id%2+1, MVMatrix, windowManager, 1);
                     passTrough(fish);
                     
 
