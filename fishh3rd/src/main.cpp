@@ -11,9 +11,10 @@
 #include <glimac/Image.hpp>
 #include <math.h>
 
+const unsigned int FISH_NUMBER = 1;
+const int AREA = 20;
+
 using namespace glimac;
-
-
 
 class Fish {
     private:
@@ -46,15 +47,6 @@ class Fish {
         //void draw();
 };
 
-
-
-
-
-
-
-
-
-
 double getAngle(double a, double b) {   
     //std::cout << a <<" " << b << std::endl;
     //std::cout << std::asin(a) <<" " << std::acos(b) << std::endl;
@@ -65,21 +57,14 @@ double getAngle(double a, double b) {
     }
 }
 
-
-
-
-
-
-
-
 std::vector<Fish> createHerd(const unsigned int fishNumber) {
     std::vector<Fish> fishherd;
     for (unsigned int i = 0; i < fishNumber; ++i) {
         double size = 0.1;
         glm::vec3 position = glm::vec3(glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size));
         // std::cout << position << std::endl;
-        //glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
-        glm::vec3 angle = glm::vec3(1, 0, 0);
+        glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
+        // glm::vec3 angle = glm::vec3(1, 0, 0);
         double speed = .1;
         Sphere shape = Sphere(1.0f, 32, 16);
         fishherd.push_back(Fish(position, angle, speed, size, shape, i));
@@ -93,20 +78,18 @@ glm::mat4 Fish::move(glm::mat4 MVMatrix, const SDLWindowManager &wm) {
     return MVMatrix;
 }
 
-
-
 glm::mat4 Fish::turn(int axis, glm::mat4 MVMatrix, const SDLWindowManager &wm) {
 
     glm::vec3 newAngle;
 
     if (axis == 1) {
         double angle = getAngle(this->angle()[0], this->angle()[1]);
-        angle += .05;
+        angle += .01;
         //std::cout << angle << std::endl;
         newAngle = glm::vec3(std::cos(angle), std::sin(angle), 0);
     } else if (axis == 2) {
         double angle = getAngle(this->angle()[0], this->angle()[2]);
-        angle += .05;
+        angle += .01;
         //std::cout << angle << std::endl;
         newAngle = glm::vec3(std::cos(angle), 0, std::sin(angle));
     } else {
@@ -119,13 +102,18 @@ glm::mat4 Fish::turn(int axis, glm::mat4 MVMatrix, const SDLWindowManager &wm) {
 }
 
 
-
-
-
-
-    
-
-
+// y'a très certainement mieux à faire mais ça fera le taf pour l'instant. 
+void passTrough(Fish &fish) {
+    if (fish.position()[0] >= AREA || fish.position()[0] <= -AREA) {
+        fish.position(glm::vec3(-fish.position()[0], fish.position()[1], fish.position()[2]));
+    }
+    if (fish.position()[1] >= AREA || fish.position()[1] <= -AREA) {
+        fish.position(glm::vec3(fish.position()[0], -fish.position()[1], fish.position()[2]));
+    }
+    if (fish.position()[2] >= AREA || fish.position()[2] <= -AREA) {
+        fish.position(glm::vec3(fish.position()[0], fish.position()[1], -fish.position()[2]));
+    }
+}
 
 int main(int argc, char** argv) {
 
@@ -231,7 +219,7 @@ int main(int argc, char** argv) {
         
     /*********************************/
 
-    std::vector<Fish> fishherd = createHerd(1);
+    std::vector<Fish> fishherd = createHerd(FISH_NUMBER);
 
     // Application loop:
     bool done = false;
@@ -291,21 +279,17 @@ int main(int argc, char** argv) {
                 */
 
                 for (Fish &fish : fishherd) {
-                    glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));
-
-                    
-                    
-
-                    
+                    glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));                   
                     
                     MVMatrix = fish.move(MVMatrix, windowManager);
 
-                    MVMatrix = fish.turn(2, MVMatrix, windowManager);
+                    // MVMatrix = fish.turn(fish.id%2+1, MVMatrix, windowManager);
 
-
+                    passTrough(fish);
+                    
                     MVMatrix = glm::scale(MVMatrix, glm::vec3(fish.size(), fish.size(), fish.size()));
                     MVMatrix = glm::translate(MVMatrix, fish.position());
-
+                    MVMatrix = glm::rotate(MVMatrix, 1.f, fish.angle());
 
 
                     glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
@@ -315,7 +299,7 @@ int main(int argc, char** argv) {
                     glDrawArrays(GL_TRIANGLES, 0, fish.shape().getVertexCount());
 
                     //std::cout << fish.angle() << std::endl;
-                    //std::cout << fish.position() << std::endl;
+                    std::cout << fish.position() << std::endl;
                 }
 
 
