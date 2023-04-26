@@ -12,9 +12,11 @@
 #include <math.h>
 
 //                                                         BEST VALUES
-const unsigned int FISH_NUMBER = 2; //                     ?
-const int AREA = 20; //                                    20
-const double TURN_FACTOR = .01; //                         0.01
+const unsigned int FISH_NUMBER = 60; //                    peu, entre 10 et 15 ça me semble pas mal ?
+const double AREA = 30.f; //                                    20.f
+const double TURN_FACTOR = .005; //                         0.01
+const double SEPARATION_RADIUS = 10; //                     10
+const double SEPARATION_STRENGTH = 1; //                    1
 
 using namespace glimac;
 
@@ -45,25 +47,26 @@ class Fish {
         void shape(Sphere newShape) {m_shape = newShape;};
 
         glm::mat4 move(glm::mat4 MVMatrix, const SDLWindowManager &wm);
-        glm::mat4 turn(int axis, glm::mat4 MVMatrix, const SDLWindowManager &wm, int dir);
+        void turn(int axis, int dir, double str);
         void draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation);
 };
 
+// - - - - - - P E T I T E S   F O N C T I O N S - - - - - -
+
+int sign(float value) {
+    return value >= 0 ? 1 : -1;
+}
+
 double getAngle(double a, double b) {   
-    //std::cout << a <<" " << b << std::endl;
-    //std::cout << std::asin(a) <<" " << std::acos(b) << std::endl;
-    if (b > 0) {
-        return std::acos(a);
-    } else {
-        return -std::acos(a);
-    }
+    return b > 0 ? std::acos(a) : -std::acos(a);
 }
 
 std::vector<Fish> createHerd(const unsigned int fishNumber) {
     std::vector<Fish> fishherd;
     for (unsigned int i = 0; i < fishNumber; ++i) {
         double size = 0.1;
-        glm::vec3 position = glm::vec3(glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size));
+        // glm::vec3 position = glm::vec3(glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size));
+        glm::vec3 position = glm::vec3(glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA));
         // std::cout << position << std::endl;
         glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
         // glm::vec3 angle = glm::vec3(1, 0, 0);
@@ -80,27 +83,25 @@ glm::mat4 Fish::move(glm::mat4 MVMatrix, const SDLWindowManager &wm) {
     return MVMatrix;
 }
 
-glm::mat4 Fish::turn(int axis, glm::mat4 MVMatrix, const SDLWindowManager &wm, int dir) {
+void Fish::turn(int axis, int dir, double str) {
+
+    // std::cout << str << std::endl;
 
     glm::vec3 newAngle;
 
-    if (axis == 1) {
+    if (axis == 1) { // 1, 1, 0
         double angle = getAngle(this->angle()[0], this->angle()[1]);
-        angle += TURN_FACTOR*dir;
-        //std::cout << angle << std::endl;
-        newAngle = glm::vec3(std::cos(angle), std::sin(angle), 0);
-    } else if (axis == 2) {
+        angle += TURN_FACTOR*dir*str;
+        newAngle = glm::vec3(std::cos(angle), std::sin(angle), this->angle()[2]);
+    } else if (axis == 2) { // 1, 0, 1
         double angle = getAngle(this->angle()[0], this->angle()[2]);
-        angle += TURN_FACTOR*dir;
-        //std::cout << angle << std::endl;
-        newAngle = glm::vec3(std::cos(angle), 0, std::sin(angle));
+        angle += TURN_FACTOR*dir*str;
+        newAngle = glm::vec3(std::cos(angle), this->angle()[1], std::sin(angle));
     } else {
-        newAngle = glm::vec3(0, 0, 0);
+        newAngle = glm::vec3(this->angle()[0], this->angle()[1], this->angle()[2]);
     }
 
-
     this->m_angle = newAngle;
-    return MVMatrix;
 }
 
 void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation) {
@@ -138,6 +139,55 @@ double distance(Fish &fish, Fish &otherFish) {
     double distance = std::sqrt(distanceX*distanceX + distanceY*distanceY + distanceZ*distanceZ);
     return distance;
 }
+
+// - - - - - - G R O S S E S   F O N C T I O N S - - - - - -
+
+void separation(Fish &fish, Fish &otherFish) {
+    float dist = distance(fish, otherFish);
+    glm::vec3 distanceVec = otherFish.position()-fish.position();
+    glm::vec3 diffAngle = fish.angle()-otherFish.angle();
+    double fishAngleXY = getAngle(fish.angle()[0], fish.angle()[1]);
+    double fishAngleXZ = getAngle(fish.angle()[0], fish.angle()[2]);
+    double otherFishAngleXY = getAngle(otherFish.angle()[0], otherFish.angle()[1]);
+    double otherFishAngleXZ = getAngle(otherFish.angle()[0], otherFish.angle()[2]);
+    double diffAngleXY = getAngle(diffAngle[0], diffAngle[1]);
+    double diffAngleXZ = getAngle(diffAngle[0], diffAngle[2]);
+
+    // std::cout << dist << std::endl;
+
+    /*
+    std::cout << "fish n°" << fish.id << std::endl;
+    std::cout << "faXY " << fishAngleXY << std::endl; 
+    std::cout << "faXZ " << fishAngleXZ << std::endl; 
+    std::cout << "ofaXY " << otherFishAngleXY << std::endl; 
+    std::cout << "ofaXZ " << otherFishAngleXZ << std::endl; 
+    std::cout << diffAngle << std::endl;
+    std::cout << "daXY " << diffAngleXY << std::endl; 
+    std::cout << "daXZ " << diffAngleXZ << std::endl << std::endl; 
+    */
+
+    int directionXY = sign(diffAngle[2]);
+    int directionXZ = sign(diffAngle[1]);
+
+    
+    /*
+    if (dist < 14.0) {
+        std::cout <<fish.id<< "je tourne a cause de "<< otherFish.id <<std::endl;
+        otherFish.turn(2, directionXZ, .5);
+        otherFish.turn(1, directionXY, .5);
+    }
+    */
+
+    if (distanceVec[0] < SEPARATION_RADIUS || distanceVec[1] < SEPARATION_RADIUS) {
+        otherFish.turn(1, directionXY, 1/(dist*SEPARATION_STRENGTH));
+    }
+    if (distanceVec[1] < SEPARATION_RADIUS || distanceVec[2] < SEPARATION_RADIUS) {
+        otherFish.turn(2, directionXZ, 1/(dist*SEPARATION_STRENGTH));
+    }
+    
+}
+
+// - - - - - - M A I N - - - - - -
 
 int main(int argc, char** argv) {
 
@@ -307,13 +357,13 @@ int main(int argc, char** argv) {
                     glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));                   
                     
                     MVMatrix = fish.move(MVMatrix, windowManager);
-                    // MVMatrix = fish.turn(fish.id%2+1, MVMatrix, windowManager, 1);
+                    // MVMatrix = fish.turn(fish.id%2+1, 1);
                     passTrough(fish);
                     
 
                     for (Fish &otherFish : fishherd) {
                         if (fish.id != otherFish.id) {
-                            ;
+                            separation(fish, otherFish);
                         }
                     }
 
