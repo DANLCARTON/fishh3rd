@@ -12,11 +12,13 @@
 #include <math.h>
 
 //                                                         BEST VALUES
-const unsigned int FISH_NUMBER = 60; //                    peu, entre 10 et 15 ça me semble pas mal ?
+const unsigned int FISH_NUMBER = 120; //                    peu, entre 10 et 15 ça me semble pas mal ?
 const double AREA = 30.f; //                                    20.f
 const double TURN_FACTOR = .005; //                         0.01
 const double SEPARATION_RADIUS = 10; //                     10
-const double SEPARATION_STRENGTH = 1; //                    1
+const double SEPARATION_STRENGTH = 1.5; //                    1
+const double ALIGNMENT_RADIUS = 20;
+const double ALIGNMENT_STRENGTH = 1;
 
 using namespace glimac;
 
@@ -71,7 +73,7 @@ std::vector<Fish> createHerd(const unsigned int fishNumber) {
         glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
         // glm::vec3 angle = glm::vec3(1, 0, 0);
         double speed = .1;
-        Sphere shape = Sphere(1.0f, 32, 16);
+        Sphere shape = Sphere(1.f, 32, 16);
         fishherd.push_back(Fish(position, angle, speed, size, shape, i));
     }
     return fishherd;
@@ -143,7 +145,6 @@ double distance(Fish &fish, Fish &otherFish) {
 // - - - - - - G R O S S E S   F O N C T I O N S - - - - - -
 
 void separation(Fish &fish, Fish &otherFish) {
-    
     float dist = distance(fish, otherFish);
     glm::vec3 distanceVec = otherFish.position()-fish.position();
     glm::vec3 diffAngle = fish.angle()-otherFish.angle();
@@ -157,7 +158,28 @@ void separation(Fish &fish, Fish &otherFish) {
     if (distanceVec[1] < SEPARATION_RADIUS || distanceVec[2] < SEPARATION_RADIUS) {
         otherFish.turn(2, directionXZ, 1/(dist*SEPARATION_STRENGTH));
     }
-    
+}
+
+void alignment(Fish &fish, Fish &otherFish) {
+    float dist = distance(fish, otherFish);
+    glm::vec3 distanceVec = otherFish.position()-fish.position();
+    glm::vec3 diffAngle = fish.angle()-otherFish.angle();
+
+    int directionXY = sign(diffAngle[2]);
+    int directionXZ = sign(diffAngle[1]);
+
+    if (
+        (SEPARATION_RADIUS < distanceVec[0] && distanceVec[0] < ALIGNMENT_RADIUS) ||
+        (SEPARATION_RADIUS < distanceVec[1] && distanceVec[1] < ALIGNMENT_RADIUS)
+    ) {
+        otherFish.turn(1, -directionXY, 1/(dist*ALIGNMENT_STRENGTH));
+    }
+    if (
+        (SEPARATION_RADIUS < distanceVec[1] && distanceVec[1] < ALIGNMENT_RADIUS) ||
+        (SEPARATION_RADIUS < distanceVec[2] && distanceVec[2] < ALIGNMENT_RADIUS)
+    ) {
+        otherFish.turn(2, -directionXZ, 1/(dist*ALIGNMENT_STRENGTH));
+    }
 }
 
 // - - - - - - M A I N - - - - - -
@@ -285,7 +307,7 @@ int main(int argc, char** argv) {
 
             glBindVertexArray(vao);
                 // Initialize Render Matrix  
-                glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), (GLfloat)width/(GLfloat)height, 0.1f, 100.f);
+                glm::mat4 ProjMatrix = glm::perspective(glm::radians(100.f), (GLfloat)width/(GLfloat)height, 0.1f, 100.f);
                     // View angle, ratio width/height, nearest depth, furthest depth
                 glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1))
                 , glm::vec3(0,0,-5));
@@ -330,13 +352,13 @@ int main(int argc, char** argv) {
                     glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));                   
                     
                     MVMatrix = fish.move(MVMatrix, windowManager);
-                    // MVMatrix = fish.turn(fish.id%2+1, 1);
                     passTrough(fish);
                     
 
                     for (Fish &otherFish : fishherd) {
                         if (fish.id != otherFish.id) {
                             separation(fish, otherFish);
+                            alignment(fish, otherFish);
                         }
                     }
 
