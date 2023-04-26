@@ -15,10 +15,12 @@
 const unsigned int FISH_NUMBER = 120; //                    peu, entre 10 et 15 ça me semble pas mal ?
 const double AREA = 30.f; //                                    20.f
 const double TURN_FACTOR = .005; //                         0.01
-const double SEPARATION_RADIUS = 10; //                     10
-const double SEPARATION_STRENGTH = 1.5; //                    1
-const double ALIGNMENT_RADIUS = 20;
+const double SEPARATION_RADIUS = 7.5; //                     10
+const double SEPARATION_STRENGTH = 1; //                    1
+const double ALIGNMENT_RADIUS = 15;
 const double ALIGNMENT_STRENGTH = 1;
+const double COHESION_RADIUS = 20;
+const double COHESION_STRENGTH = 1;
 
 using namespace glimac;
 
@@ -174,12 +176,33 @@ void alignment(Fish &fish, Fish &otherFish) {
     ) {
         otherFish.turn(1, -directionXY, 1/(dist*ALIGNMENT_STRENGTH));
     }
+
     if (
         (SEPARATION_RADIUS < distanceVec[1] && distanceVec[1] < ALIGNMENT_RADIUS) ||
         (SEPARATION_RADIUS < distanceVec[2] && distanceVec[2] < ALIGNMENT_RADIUS)
     ) {
         otherFish.turn(2, -directionXZ, 1/(dist*ALIGNMENT_STRENGTH));
     }
+}
+
+void cohesion(Fish &fish, std::vector<Fish> &fishherd) {
+    double averageXYDirection = 0;
+    double averageXZDirection = 0;
+    double fishesInTheRadius = 0;
+
+    for (Fish &otherFish : fishherd) {
+        if (distance(fish, otherFish) < COHESION_RADIUS) {
+            averageXYDirection += getAngle(otherFish.angle()[0], otherFish.angle()[1]);
+            averageXZDirection += getAngle(otherFish.angle()[0], otherFish.angle()[2]);
+            ++fishesInTheRadius;
+        }
+    }
+
+    averageXYDirection = averageXYDirection/fishesInTheRadius;
+    averageXZDirection = averageXZDirection/fishesInTheRadius;
+
+    fish.turn(1, averageXYDirection, COHESION_STRENGTH);
+    fish.turn(2, averageXZDirection, COHESION_STRENGTH);
 }
 
 // - - - - - - M A I N - - - - - -
@@ -189,7 +212,7 @@ int main(int argc, char** argv) {
     // Initialize SDL and open a window
     float width  = 1280;
     float height = 720; 
-    SDLWindowManager windowManager(width, height, "FISHH3RD");
+    SDLWindowManager windowManager(width, height, "✨𝐅𝐈𝐒𝐇𝐇𝟑𝐑𝐃✨");
 
     // Initialize glew for OpenGL3+ support
     GLenum glewInitError = glewInit();
@@ -361,6 +384,7 @@ int main(int argc, char** argv) {
                             alignment(fish, otherFish);
                         }
                     }
+                    cohesion(fish, fishherd);
 
                     fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation);
 
