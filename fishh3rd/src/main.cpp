@@ -143,40 +143,13 @@ double distance(Fish &fish, Fish &otherFish) {
 // - - - - - - G R O S S E S   F O N C T I O N S - - - - - -
 
 void separation(Fish &fish, Fish &otherFish) {
+    
     float dist = distance(fish, otherFish);
     glm::vec3 distanceVec = otherFish.position()-fish.position();
     glm::vec3 diffAngle = fish.angle()-otherFish.angle();
-    double fishAngleXY = getAngle(fish.angle()[0], fish.angle()[1]);
-    double fishAngleXZ = getAngle(fish.angle()[0], fish.angle()[2]);
-    double otherFishAngleXY = getAngle(otherFish.angle()[0], otherFish.angle()[1]);
-    double otherFishAngleXZ = getAngle(otherFish.angle()[0], otherFish.angle()[2]);
-    double diffAngleXY = getAngle(diffAngle[0], diffAngle[1]);
-    double diffAngleXZ = getAngle(diffAngle[0], diffAngle[2]);
-
-    // std::cout << dist << std::endl;
-
-    /*
-    std::cout << "fish n°" << fish.id << std::endl;
-    std::cout << "faXY " << fishAngleXY << std::endl; 
-    std::cout << "faXZ " << fishAngleXZ << std::endl; 
-    std::cout << "ofaXY " << otherFishAngleXY << std::endl; 
-    std::cout << "ofaXZ " << otherFishAngleXZ << std::endl; 
-    std::cout << diffAngle << std::endl;
-    std::cout << "daXY " << diffAngleXY << std::endl; 
-    std::cout << "daXZ " << diffAngleXZ << std::endl << std::endl; 
-    */
 
     int directionXY = sign(diffAngle[2]);
     int directionXZ = sign(diffAngle[1]);
-
-    
-    /*
-    if (dist < 14.0) {
-        std::cout <<fish.id<< "je tourne a cause de "<< otherFish.id <<std::endl;
-        otherFish.turn(2, directionXZ, .5);
-        otherFish.turn(1, directionXY, .5);
-    }
-    */
 
     if (distanceVec[0] < SEPARATION_RADIUS || distanceVec[1] < SEPARATION_RADIUS) {
         otherFish.turn(1, directionXY, 1/(dist*SEPARATION_STRENGTH));
