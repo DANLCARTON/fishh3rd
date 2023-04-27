@@ -4,6 +4,7 @@
         "initializer_list": "cpp",
         "ranges": "cpp",
         "string_view": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "ostream": "cpp"
     }
 }

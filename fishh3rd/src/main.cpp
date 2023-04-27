@@ -15,12 +15,15 @@
 const unsigned int FISH_NUMBER = 120; //                    peu, entre 10 et 15 ça me semble pas mal ?
 const double AREA = 30.f; //                                    20.f
 const double TURN_FACTOR = .005; //                         0.01
-const double SEPARATION_RADIUS = 7.5; //                     10
+const double SEPARATION_RADIUS = 5; //                     10
 const double SEPARATION_STRENGTH = 1; //                    1
-const double ALIGNMENT_RADIUS = 15;
-const double ALIGNMENT_STRENGTH = 1;
-const double COHESION_RADIUS = 20;
-const double COHESION_STRENGTH = 1;
+const double ALIGNMENT_RADIUS = 10; //                      10
+const double ALIGNMENT_STRENGTH = 1; //                       1
+const double COHESION_RADIUS = 15; //                     15
+const double COHESION_STRENGTH = 1; //                        1
+const double WALLS_RADIUS = 5; //                            5
+const double WALLS_STRENGTH = 1; //                        1
+const double SPEED = 0.15; //                                 .15
 
 using namespace glimac;
 
@@ -73,8 +76,8 @@ std::vector<Fish> createHerd(const unsigned int fishNumber) {
         glm::vec3 position = glm::vec3(glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA));
         // std::cout << position << std::endl;
         glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
-        // glm::vec3 angle = glm::vec3(1, 0, 0);
-        double speed = .1;
+        //glm::vec3 angle = glm::vec3(1.f, -0.2f, 0.f);
+        double speed = SPEED;
         Sphere shape = Sphere(1.f, 32, 16);
         fishherd.push_back(Fish(position, angle, speed, size, shape, i));
     }
@@ -84,6 +87,7 @@ std::vector<Fish> createHerd(const unsigned int fishNumber) {
 glm::mat4 Fish::move(glm::mat4 MVMatrix, const SDLWindowManager &wm) {
     // MVMatrix = glm::translate(MVMatrix, this->angle()*(wm.getTime()+1));
     this->position(this->position()+(this->angle()*glm::vec3(this->speed())));
+    // std::cout << this->position() << this->angle() << std::endl;
     return MVMatrix;
 }
 
@@ -93,11 +97,15 @@ void Fish::turn(int axis, int dir, double str) {
 
     glm::vec3 newAngle;
 
-    if (axis == 1) { // 1, 1, 0
+    if (axis == 0) { // 0, 1, 1 | YZ
+        double angle = getAngle(this->angle()[1], this->angle()[2]);
+        angle += TURN_FACTOR*dir*str;
+        newAngle = glm::vec3(this->angle()[0], std::cos(angle), std::sin(angle));
+    } else if (axis == 1) { // 1, 1, 0 | XY
         double angle = getAngle(this->angle()[0], this->angle()[1]);
         angle += TURN_FACTOR*dir*str;
         newAngle = glm::vec3(std::cos(angle), std::sin(angle), this->angle()[2]);
-    } else if (axis == 2) { // 1, 0, 1
+    } else if (axis == 2) { // 1, 0, 1 | XZ
         double angle = getAngle(this->angle()[0], this->angle()[2]);
         angle += TURN_FACTOR*dir*str;
         newAngle = glm::vec3(std::cos(angle), this->angle()[1], std::sin(angle));
@@ -120,21 +128,6 @@ void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix
 
     glDrawArrays(GL_TRIANGLES, 0, this->shape().getVertexCount());
 }
-
-
-// y'a très certainement mieux à faire mais ça fera le taf pour l'instant. 
-void passTrough(Fish &fish) {
-    if (fish.position()[0] >= AREA || fish.position()[0] <= -AREA) {
-        fish.position(glm::vec3(-fish.position()[0], fish.position()[1], fish.position()[2]));
-    }
-    if (fish.position()[1] >= AREA || fish.position()[1] <= -AREA) {
-        fish.position(glm::vec3(fish.position()[0], -fish.position()[1], fish.position()[2]));
-    }
-    if (fish.position()[2] >= AREA || fish.position()[2] <= -AREA) {
-        fish.position(glm::vec3(fish.position()[0], fish.position()[1], -fish.position()[2]));
-    }
-}
-
 
 double distance(Fish &fish, Fish &otherFish) {
     double distanceX = otherFish.position()[0] - fish.position()[0];
@@ -205,9 +198,80 @@ void cohesion(Fish &fish, std::vector<Fish> &fishherd) {
     fish.turn(2, averageXZDirection, COHESION_STRENGTH);
 }
 
+// - - - - - - G E S T I O N   D E S   M U R S - - - - - -
+
+void avoidWall(Fish &fish, double distance, const int wall) {
+
+    // double str = WALLS_STRENGTH*(1/(distance));
+    // double str = WALLS_STRENGTH*std::exp(-distance);
+    double str = 20;
+    std::cout << fish.id << " " << distance << " " << wall << " " << str <<  std::endl;
+    // std::cout << WALLS_STRENGTH << "  " << distance << std::endl;
+ 
+    int dir = sign(wall);
+    if (wall == 1 || wall == -1) { // x ou -x
+        if (std::abs(fish.angle()[1]) > std::abs(fish.angle()[2])) { // y > z
+            fish.turn(2, sign(fish.angle()[1])*dir, str);
+            //if (dir == sign(fish.angle()[0])) fish.turn(2, sign(fish.angle()[1])*dir, str);
+        } else {
+            fish.turn(1, sign(fish.angle()[2])*dir, str);
+            //if (dir == sign(fish.angle()[0])) fish.turn(1, sign(fish.angle()[2])*dir, str);
+        }
+    } else if (wall == 2 || wall == -2) { // y ou -y
+        if (std::abs(fish.angle()[0]) > std::abs(fish.angle()[2])) { // x > z
+            fish.turn(1, sign(fish.angle()[0])*dir, str);
+            //if (dir == sign(fish.angle()[1])) fish.turn(1, sign(fish.angle()[0])*dir, str);
+        } else {
+            fish.turn(0, sign(fish.angle()[2])*dir, str);
+            //if (dir == sign(fish.angle()[1])) fish.turn(0, sign(fish.angle()[2])*dir, str);
+        }
+    } else if (wall == 3 || wall == -3) { // z ou -z
+        if (std::abs(fish.angle()[0]) > std::abs(fish.angle()[1])) { // x > y
+            fish.turn(2, sign(fish.angle()[0])*dir, str);
+            //if (dir == sign(fish.angle()[2])) fish.turn(2, sign(fish.angle()[0])*dir, str);
+        } else {
+            fish.turn(0, sign(fish.angle()[1])*dir, str);
+            //if (dir == sign(fish.angle()[2])) fish.turn(0, sign(fish.angle()[1])*dir, str);
+        }
+    } else {
+        ;
+    }
+}
+
+void wallSeparation(Fish &fish) {
+    double rightWallDistance = AREA-fish.position()[0];
+    double leftWallDistance = fish.position()[0]+AREA;
+    double topWallDistance = AREA-fish.position()[1];
+    double bottomWallDistance = fish.position()[1]+AREA;
+    double backWallDistance = AREA-fish.position()[2];
+    double frontWallDistance = fish.position()[2]+AREA;
+
+    if (rightWallDistance < WALLS_RADIUS) avoidWall(fish, rightWallDistance, 1);
+    if (leftWallDistance < WALLS_RADIUS) avoidWall(fish, leftWallDistance, -1);
+    if (topWallDistance < WALLS_RADIUS) avoidWall(fish, topWallDistance, 2);
+    if (bottomWallDistance < WALLS_RADIUS) avoidWall(fish, bottomWallDistance, -2);
+    if (backWallDistance < WALLS_RADIUS) avoidWall(fish, backWallDistance, 3);
+    if (frontWallDistance < WALLS_RADIUS) avoidWall(fish, frontWallDistance, -3);
+}
+
+// y'a très certainement mieux à faire mais ça fera le taf pour l'instant. 
+void passTrough(Fish &fish) {
+    if (fish.position()[0] >= AREA || fish.position()[0] <= -AREA) {
+        fish.position(glm::vec3(-fish.position()[0]+sign(fish.position()[0])*3, fish.position()[1], fish.position()[2]));
+    }
+    if (fish.position()[1] >= AREA || fish.position()[1] <= -AREA) {
+        fish.position(glm::vec3(fish.position()[0], -fish.position()[1]+sign(fish.position()[1])*3, fish.position()[2]));
+    }
+    if (fish.position()[2] >= AREA || fish.position()[2] <= -AREA) {
+        fish.position(glm::vec3(fish.position()[0], fish.position()[1], -fish.position()[2]+sign(fish.position()[2])*3));
+    }
+}
+
 // - - - - - - M A I N - - - - - -
 
 int main(int argc, char** argv) {
+
+    std::cout << (0 == -0) << std::endl;
 
     // Initialize SDL and open a window
     float width  = 1280;
@@ -385,6 +449,7 @@ int main(int argc, char** argv) {
                         }
                     }
                     cohesion(fish, fishherd);
+                    // wallSeparation(fish);
 
                     fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation);
 
