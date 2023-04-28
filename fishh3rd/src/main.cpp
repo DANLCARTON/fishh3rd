@@ -12,7 +12,7 @@
 #include <math.h>
 
 //                                                         BEST VALUES
-const unsigned int FISH_NUMBER = 120; //                    peu, entre 10 et 15 ça me semble pas mal ?
+const unsigned int FISH_NUMBER = 150; //                    peu, entre 10 et 15 ça me semble pas mal ?
 const double AREA = 30.f; //                                    20.f
 const double TURN_FACTOR = .005; //                         0.01
 const double SEPARATION_RADIUS = 5; //                     10
@@ -21,7 +21,7 @@ const double ALIGNMENT_RADIUS = 10; //                      10
 const double ALIGNMENT_STRENGTH = 1; //                       1
 const double COHESION_RADIUS = 15; //                     15
 const double COHESION_STRENGTH = 1; //                        1
-const double WALLS_RADIUS = 5; //                            5
+const double WALLS_RADIUS = 20; //                            5
 const double WALLS_STRENGTH = 1; //                        1
 const double SPEED = 0.15; //                                 .15
 
@@ -75,8 +75,8 @@ std::vector<Fish> createHerd(const unsigned int fishNumber) {
         // glm::vec3 position = glm::vec3(glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size));
         glm::vec3 position = glm::vec3(glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA));
         // std::cout << position << std::endl;
-        glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
-        //glm::vec3 angle = glm::vec3(1.f, -0.2f, 0.f);
+        // glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
+        glm::vec3 angle = glm::vec3(0, 0, -1);
         double speed = SPEED;
         Sphere shape = Sphere(1.f, 32, 16);
         fishherd.push_back(Fish(position, angle, speed, size, shape, i));
@@ -200,6 +200,7 @@ void cohesion(Fish &fish, std::vector<Fish> &fishherd) {
 
 // - - - - - - G E S T I O N   D E S   M U R S - - - - - -
 
+/*
 void avoidWall(Fish &fish, double distance, const int wall) {
 
     // double str = WALLS_STRENGTH*(1/(distance));
@@ -237,6 +238,63 @@ void avoidWall(Fish &fish, double distance, const int wall) {
         ;
     }
 }
+*/
+
+// fish : position, angle, speed, size, shape, id
+
+void avoidWall(Fish &wallFish, Fish &fish) {
+
+    float dist = distance(wallFish, fish);
+    glm::vec3 distanceVec = fish.position()-wallFish.position();
+    glm::vec3 diffAngle = wallFish.angle()-fish.angle();
+
+    int directionXY = sign(diffAngle[2]);
+    int directionXZ = sign(diffAngle[1]);
+
+    if ((distanceVec[0] < WALLS_RADIUS) || (distanceVec[1] < WALLS_RADIUS)) {
+        fish.turn(1, -directionXY, 1/(dist*.2*WALLS_STRENGTH));
+    }
+
+    if ((distanceVec[1] < WALLS_RADIUS) ||(distanceVec[2] < WALLS_RADIUS)) {
+        fish.turn(2, -directionXZ, 1/(dist*.2*WALLS_STRENGTH));
+    }
+}
+
+void wall(Fish &fish, double distance, const int wall) {
+    Fish wallFish = Fish(
+        glm::vec3(fish.position()),
+        glm::vec3(0),
+        0, 0, Sphere(0, 0, 0), 1000
+    );
+    if (wall == 1) {
+        wallFish.position(glm::vec3(AREA, fish.position()[1], fish.position()[2]));
+        //wallFish.position(glm::vec3(AREA, 0, 0));
+        wallFish.angle(glm::vec3(-1, 0, 0));
+    } else if (wall == -1) {
+        wallFish.position(glm::vec3(-AREA, fish.position()[1], fish.position()[2]));
+        //wallFish.position(glm::vec3(-AREA, 0, 0));
+        wallFish.angle(glm::vec3(1, 0, 0));
+    } else if (wall == 2) {
+        wallFish.position(glm::vec3(fish.position()[0], AREA, fish.position()[2]));
+        //wallFish.position(glm::vec3(0, AREA, 0));
+        wallFish.angle(glm::vec3(0, -1, 0));
+    } else if (wall == -2) {
+        wallFish.position(glm::vec3(fish.position()[0], -AREA, fish.position()[2]));
+        //wallFish.position(glm::vec3(0, -AREA, 0));
+        wallFish.angle(glm::vec3(0, 1, 0));
+    } else if (wall == 3) {
+        wallFish.position(glm::vec3(fish.position()[0], fish.position()[1], AREA));
+        //wallFish.position(glm::vec3(0, 0, -AREA));
+        wallFish.angle(glm::vec3(0, 0, -1));
+    } else if (wall == -3) {
+        wallFish.position(glm::vec3(fish.position()[0], fish.position()[1], -AREA));
+        //wallFish.position(glm::vec3(0, 0, AREA));
+        wallFish.angle(glm::vec3(0, 0, 1));
+    } else {
+        return;
+    }
+    avoidWall(wallFish, fish);
+}
 
 void wallSeparation(Fish &fish) {
     double rightWallDistance = AREA-fish.position()[0];
@@ -246,23 +304,24 @@ void wallSeparation(Fish &fish) {
     double backWallDistance = AREA-fish.position()[2];
     double frontWallDistance = fish.position()[2]+AREA;
 
-    if (rightWallDistance < WALLS_RADIUS) avoidWall(fish, rightWallDistance, 1);
-    if (leftWallDistance < WALLS_RADIUS) avoidWall(fish, leftWallDistance, -1);
-    if (topWallDistance < WALLS_RADIUS) avoidWall(fish, topWallDistance, 2);
-    if (bottomWallDistance < WALLS_RADIUS) avoidWall(fish, bottomWallDistance, -2);
-    if (backWallDistance < WALLS_RADIUS) avoidWall(fish, backWallDistance, 3);
-    if (frontWallDistance < WALLS_RADIUS) avoidWall(fish, frontWallDistance, -3);
+    if (rightWallDistance < WALLS_RADIUS) wall(fish, rightWallDistance, 1);
+    if (leftWallDistance < WALLS_RADIUS) wall(fish, leftWallDistance, -1);
+    if (topWallDistance < WALLS_RADIUS) wall(fish, topWallDistance, 2);
+    if (bottomWallDistance < WALLS_RADIUS) wall(fish, bottomWallDistance, -2);
+    if (backWallDistance < WALLS_RADIUS) wall(fish, backWallDistance, 3);
+    if (frontWallDistance < WALLS_RADIUS) wall(fish, frontWallDistance, -3);
 }
 
 // y'a très certainement mieux à faire mais ça fera le taf pour l'instant. 
 void passTrough(Fish &fish) {
-    if (fish.position()[0] >= AREA || fish.position()[0] <= -AREA) {
+    const double realFishArea = AREA+20;
+    if (fish.position()[0] >= realFishArea || fish.position()[0] <= -realFishArea) {
         fish.position(glm::vec3(-fish.position()[0]+sign(fish.position()[0])*3, fish.position()[1], fish.position()[2]));
     }
-    if (fish.position()[1] >= AREA || fish.position()[1] <= -AREA) {
+    if (fish.position()[1] >= realFishArea || fish.position()[1] <= -realFishArea) {
         fish.position(glm::vec3(fish.position()[0], -fish.position()[1]+sign(fish.position()[1])*3, fish.position()[2]));
     }
-    if (fish.position()[2] >= AREA || fish.position()[2] <= -AREA) {
+    if (fish.position()[2] >= realFishArea || fish.position()[2] <= -realFishArea) {
         fish.position(glm::vec3(fish.position()[0], fish.position()[1], -fish.position()[2]+sign(fish.position()[2])*3));
     }
 }
@@ -449,7 +508,7 @@ int main(int argc, char** argv) {
                         }
                     }
                     cohesion(fish, fishherd);
-                    // wallSeparation(fish);
+                    //wallSeparation(fish);
 
                     fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation);
 
