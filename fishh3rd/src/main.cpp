@@ -10,6 +10,7 @@
 #include <glimac/FilePath.hpp>
 #include <glimac/Image.hpp>
 #include <math.h>
+#include <SDL.h>
 
 //                                                         BEST VALUES
 const unsigned int FISH_NUMBER = 150; //                    peu, entre 10 et 15 ça me semble pas mal ?
@@ -75,8 +76,8 @@ std::vector<Fish> createHerd(const unsigned int fishNumber) {
         // glm::vec3 position = glm::vec3(glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size));
         glm::vec3 position = glm::vec3(glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA));
         // std::cout << position << std::endl;
-        // glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
-        glm::vec3 angle = glm::vec3(0, 0, -1);
+        glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
+        //glm::vec3 angle = glm::vec3(0, 0, -1);
         double speed = SPEED;
         Sphere shape = Sphere(1.f, 32, 16);
         fishherd.push_back(Fish(position, angle, speed, size, shape, i));
@@ -435,6 +436,13 @@ int main(int argc, char** argv) {
     /*********************************/
 
     std::vector<Fish> fishherd = createHerd(FISH_NUMBER);
+    Fish playerFish = Fish(glm::vec3(0), glm::vec3(0, 0, -1), .2, .2, Sphere(1, 32, 16), 10000);
+
+    bool moveUp = false;
+    bool moveDown = false;
+    bool moveLeft = false;
+    bool moveRight = false;
+
 
     // Application loop:
     bool done = false;
@@ -508,13 +516,70 @@ int main(int argc, char** argv) {
                         }
                     }
                     cohesion(fish, fishherd);
+                    separation(playerFish, fish);
+                    alignment(playerFish, fish);
                     //wallSeparation(fish);
 
-                    fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation);
+                    fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation);    
 
                     //std::cout << fish.angle() << std::endl;
                     //std::cout << fish.position() << std::endl;
                 }
+
+                MVMatrix = playerFish.move(MVMatrix, windowManager);
+                passTrough(playerFish);
+                playerFish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation);
+
+                while (windowManager.pollEvent(e)) {
+                    if (e.type == SDL_QUIT) {
+                        done = true;
+                    } else if (e.type == SDL_KEYDOWN) {
+                        switch (e.key.keysym.sym) {
+                            case SDLK_UP:
+                                moveUp = true;
+                                break;
+                            case SDLK_DOWN:
+                                moveDown = true;
+                                break;
+                            case SDLK_LEFT:
+                                moveLeft = true;
+                                break;
+                            case SDLK_RIGHT:
+                                moveRight = true;
+                        }
+                    } else if (e.type == SDL_KEYUP) {
+                        switch (e.key.keysym.sym) {
+                            case SDLK_UP:
+                                moveUp = false;
+                                break;
+                            case SDLK_DOWN:
+                                moveDown = false;
+                                break;
+                            case SDLK_LEFT:
+                                moveLeft = false;
+                                break;
+                            case SDLK_RIGHT:
+                                moveRight = false;
+                        }
+                    }
+                }
+
+                if (moveUp) {
+                    playerFish.turn(0, 1, 10);
+                }
+
+                if (moveDown) {
+                    playerFish.turn(0, -1, 10);
+                }
+
+                if (moveLeft) {
+                    playerFish.turn(2, -1, 10);
+                }
+
+                if (moveRight) {
+                    playerFish.turn(2, 1, 10);
+                }
+
 
 
             glBindVertexArray(0);
