@@ -1,4 +1,6 @@
 #define GLM_FORCE_RADIANS
+#define TINYOBJLOADER_IMPLEMENTATION
+//#include "../glimac/src/tiny_obj_loader.h"
 #include "glm/detail/type_mat.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include <glimac/SDLWindowManager.hpp>
@@ -9,11 +11,12 @@
 #include <glimac/Program.hpp>
 #include <glimac/FilePath.hpp>
 #include <glimac/Image.hpp>
+#include <glimac/Geometry.hpp>
 #include <math.h>
 #include <SDL.h>
 
 //                                                         BEST VALUES
-const unsigned int FISH_NUMBER = 150; //                    peu, entre 10 et 15 ça me semble pas mal ?
+const unsigned int FISH_NUMBER = 1; //                    peu, entre 10 et 15 ça me semble pas mal ?
 const double AREA = 30.f; //                                    20.f
 const double TURN_FACTOR = .005; //                         0.01
 const double SEPARATION_RADIUS = 5; //                     10
@@ -25,6 +28,150 @@ const double COHESION_STRENGTH = 1; //                        1
 const double WALLS_RADIUS = 20; //                            5
 const double WALLS_STRENGTH = 1; //                        1
 const double SPEED = 0.15; //                                 .15
+
+// - - - - - - OBJ MODELE 3D - - - - - -
+
+std::vector<float> vertices;
+std::vector<float> normals;
+std::vector<unsigned int> indices;
+
+/*
+std::string inputfile = "Fish.obj";
+tinyobj::ObjReaderConfig reader_config;
+reader_config.mtl_search_path = "../assets/models"; // Path to material files
+
+tinyobj::ObjReader reader;
+
+if (!reader.ParseFromFile(inputfile, reader_config)) {
+  if (!reader.Error().empty()) {
+      std::cerr << "TinyObjReader: " << reader.Error();
+  }
+  exit(1);
+}
+
+if (!reader.Warning().empty()) {
+  std::cout << "TinyObjReader: " << reader.Warning();
+}
+
+auto& attrib = reader.GetAttrib();
+auto& shapes = reader.GetShapes();
+auto& materials = reader.GetMaterials();
+
+// Loop over shapes
+for (size_t s = 0; s < shapes.size(); s++) {
+  // Loop over faces(polygon)
+  size_t index_offset = 0;
+  for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
+    size_t fv = size_t(shapes[s].mesh.num_face_vertices[f]);
+    indices.push_back(fv);
+
+    // Loop over vertices in the face.
+    for (size_t v = 0; v < fv; v++) {
+      // access to vertex
+      tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
+      tinyobj::real_t vx = attrib.vertices[3*size_t(idx.vertex_index)+0];
+      tinyobj::real_t vy = attrib.vertices[3*size_t(idx.vertex_index)+1];
+      tinyobj::real_t vz = attrib.vertices[3*size_t(idx.vertex_index)+2];
+      vertices.push_back(vx);
+      vertices.push_back(vy);
+      vertices.push_back(vz);
+
+      // Check if `normal_index` is zero or positive. negative = no normal data
+      if (idx.normal_index >= 0) {
+        tinyobj::real_t nx = attrib.normals[3*size_t(idx.normal_index)+0];
+        tinyobj::real_t ny = attrib.normals[3*size_t(idx.normal_index)+1];
+        tinyobj::real_t nz = attrib.normals[3*size_t(idx.normal_index)+2];
+        normals.push_back(nx);
+        normals.push_back(ny);
+        normals.push_back(nz);
+      }
+
+      // Check if `texcoord_index` is zero or positive. negative = no texcoord data
+      if (idx.texcoord_index >= 0) {
+        tinyobj::real_t tx = attrib.texcoords[2*size_t(idx.texcoord_index)+0];
+        tinyobj::real_t ty = attrib.texcoords[2*size_t(idx.texcoord_index)+1];
+      }
+    }
+    index_offset += fv;
+
+    // per-face material
+    shapes[s].mesh.material_ids[f];
+  }
+}
+
+*/
+/*
+
+std::string inputfile = "../assets/models/Fish.obj";
+tinyobj::attrib_t attrib;
+std::vector<tinyobj::shape_t> shapes;
+std::vector<tinyobj::material_t> materials;
+
+std::string warn;
+std::string err;
+
+bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str());
+
+if (!warn.empty()) {
+  std::cout << warn << std::endl;
+}
+
+if (!err.empty()) {
+  std::cerr << err << std::endl;
+}
+
+if (!ret) {
+  exit(1);
+}
+
+// Loop over shapes
+for (size_t s = 0; s < shapes.size(); s++) {
+  // Loop over faces(polygon)
+  size_t index_offset = 0;
+  for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
+    size_t fv = size_t(shapes[s].mesh.num_face_vertices[f]);
+    indices.push_back(fv);
+
+    // Loop over vertices in the face.
+    for (size_t v = 0; v < fv; v++) {
+      // access to vertex
+      tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
+
+      tinyobj::real_t vx = attrib.vertices[3*size_t(idx.vertex_index)+0];
+      tinyobj::real_t vy = attrib.vertices[3*size_t(idx.vertex_index)+1];
+      tinyobj::real_t vz = attrib.vertices[3*size_t(idx.vertex_index)+2];
+      vertices.push_back(vx);
+      vertices.push_back(vy);
+      vertices.push_back(vz);
+
+      // Check if `normal_index` is zero or positive. negative = no normal data
+      if (idx.normal_index >= 0) {
+        tinyobj::real_t nx = attrib.normals[3*size_t(idx.normal_index)+0];
+        tinyobj::real_t ny = attrib.normals[3*size_t(idx.normal_index)+1];
+        tinyobj::real_t nz = attrib.normals[3*size_t(idx.normal_index)+2];
+        normals.push_back(nx);
+        normals.push_back(ny);
+        normals.push_back(nz);
+      }
+
+      // Check if `texcoord_index` is zero or positive. negative = no texcoord data
+      if (idx.texcoord_index >= 0) {
+        tinyobj::real_t tx = attrib.texcoords[2*size_t(idx.texcoord_index)+0];
+        tinyobj::real_t ty = attrib.texcoords[2*size_t(idx.texcoord_index)+1];
+      }
+    }
+    index_offset += fv;
+
+    // per-face material
+    shapes[s].mesh.material_ids[f];
+  }
+}
+*/
+
+
+// - - - - - FISH CLASS - - - - - -
+
+
 
 using namespace glimac;
 
@@ -56,7 +203,7 @@ class Fish {
 
         glm::mat4 move(glm::mat4 MVMatrix, const SDLWindowManager &wm);
         void turn(int axis, int dir, double str);
-        void draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation);
+        void draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape);
 };
 
 // - - - - - - P E T I T E S   F O N C T I O N S - - - - - -
@@ -117,7 +264,7 @@ void Fish::turn(int axis, int dir, double str) {
     this->m_angle = newAngle;
 }
 
-void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation) {
+void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape) {
 
     MVMatrix = glm::scale(MVMatrix, glm::vec3(this->size(), this->size(), this->size()));
     MVMatrix = glm::translate(MVMatrix, this->position());
@@ -127,7 +274,9 @@ void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix
     glUniformMatrix4fv(uMVProjMatrixLocarion, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
     glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));    
 
-    glDrawArrays(GL_TRIANGLES, 0, this->shape().getVertexCount());
+    //glDrawArrays(GL_TRIANGLES, 0, this->shape().getVertexCount());
+    glDrawElements(GL_TRIANGLES, shape.getIndexCount(), GL_UNSIGNED_INT, 0);
+
 }
 
 double distance(Fish &fish, Fish &otherFish) {
@@ -327,9 +476,45 @@ void passTrough(Fish &fish) {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // - - - - - - M A I N - - - - - -
 
 int main(int argc, char** argv) {
+
+    Geometry FishMesh;
+    FishMesh.loadOBJ("../assets/models/cube.obj", "../assets/models/cube.mtl");
 
     std::cout << (0 == -0) << std::endl;
 
@@ -398,12 +583,35 @@ int main(int argc, char** argv) {
         }
         */
   
+        
+        /*
         GLuint vbo;
         glGenBuffers(1,&vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
             Sphere sphere=Sphere(1,32,16);
             glBufferData(GL_ARRAY_BUFFER, sphere.getVertexCount() * sizeof(ShapeVertex), sphere.getDataPointer(), GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);    
+        glBindBuffer(GL_ARRAY_BUFFER, 0);   
+        */
+
+
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            std::vector<float> vertex_data;
+            /*for (int i = 0; i < attrib.vertices.size(); ++i) {
+                vertex_data.push_back(attrib.vertices[i]);
+            }*/
+            glBufferData(GL_ARRAY_BUFFER, sizeof(Geometry::Vertex) * FishMesh.getVertexCount(), FishMesh.getVertexBuffer(), GL_STATIC_DRAW);
+            //glBufferData(GL_ARRAY_BUFFER, vertex_data.size()*sizeof(float), vertex_data.data(), GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+        GLuint ebo;
+        glGenBuffers(1, &ebo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * FishMesh.getIndexCount(), FishMesh.getIndexBuffer(), GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 
         GLuint vao;
         glGenVertexArrays(1, &vao);
@@ -421,13 +629,13 @@ int main(int argc, char** argv) {
             glBindBuffer(GL_ARRAY_BUFFER,vbo);
                 glVertexAttribPointer(VERTEX_ATTR_POSITION, 
                     3, GL_FLOAT, GL_FALSE, 
-                    sizeof(ShapeVertex),0);
+                    sizeof(float),0);
                 glVertexAttribPointer(VERTEX_ATTR_NORMAL,
                     3, GL_FLOAT, GL_FALSE, 
-                    sizeof(ShapeVertex),(void*) (sizeof(glm::vec3)));
+                    sizeof(float),(void*) (sizeof(glm::vec3)));
                 glVertexAttribPointer(VERTEX_ATTR_TEXTURE,
                     2, GL_FLOAT, GL_FALSE, 
-                    sizeof(ShapeVertex),(void*) (2*sizeof(glm::vec3)));
+                    sizeof(float),(void*) (2*sizeof(glm::vec3)));
             glBindBuffer(GL_ARRAY_BUFFER,0);
 
         glBindVertexArray(0);
@@ -520,7 +728,7 @@ int main(int argc, char** argv) {
                     alignment(playerFish, fish);
                     //wallSeparation(fish);
 
-                    fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation);    
+                    fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh);    
 
                     //std::cout << fish.angle() << std::endl;
                     //std::cout << fish.position() << std::endl;
@@ -528,7 +736,7 @@ int main(int argc, char** argv) {
 
                 MVMatrix = playerFish.move(MVMatrix, windowManager);
                 passTrough(playerFish);
-                playerFish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation);
+                playerFish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh);
 
                 while (windowManager.pollEvent(e)) {
                     if (e.type == SDL_QUIT) {

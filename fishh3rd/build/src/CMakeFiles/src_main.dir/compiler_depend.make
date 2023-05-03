@@ -463,11 +463,17 @@ src/CMakeFiles/src_main.dir/main.cpp.o: /home/6ima2/eric.thiberge/fishh3rd/fishh
   /usr/include/c++/10/bits/hashtable_policy.h \
   /usr/include/c++/10/bits/unordered_map.h \
   /usr/include/c++/10/bits/erase_if.h \
+  /home/6ima2/eric.thiberge/fishh3rd/fishh3rd/glimac/include/glimac/Geometry.hpp \
+  /home/6ima2/eric.thiberge/fishh3rd/fishh3rd/glimac/include/glimac/BBox.hpp \
   /usr/include/c++/10/math.h \
   /usr/include/SDL/SDL.h
 
 
 /usr/include/c++/10/math.h:
+
+/home/6ima2/eric.thiberge/fishh3rd/fishh3rd/glimac/include/glimac/BBox.hpp:
+
+/home/6ima2/eric.thiberge/fishh3rd/fishh3rd/glimac/include/glimac/Geometry.hpp:
 
 /usr/include/c++/10/bits/erase_if.h:
 
