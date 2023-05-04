@@ -16,7 +16,7 @@
 #include <SDL.h>
 
 //                                                         BEST VALUES
-const unsigned int FISH_NUMBER = 1; //                    peu, entre 10 et 15 ça me semble pas mal ?
+const unsigned int FISH_NUMBER = 150; //                    peu, entre 10 et 15 ça me semble pas mal ?
 const double AREA = 30.f; //                                    20.f
 const double TURN_FACTOR = .005; //                         0.01
 const double SEPARATION_RADIUS = 5; //                     10
@@ -219,7 +219,7 @@ double getAngle(double a, double b) {
 std::vector<Fish> createHerd(const unsigned int fishNumber) {
     std::vector<Fish> fishherd;
     for (unsigned int i = 0; i < fishNumber; ++i) {
-        double size = 0.1;
+        double size = .1;
         // glm::vec3 position = glm::vec3(glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size));
         glm::vec3 position = glm::vec3(glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA));
         // std::cout << position << std::endl;
@@ -266,6 +266,8 @@ void Fish::turn(int axis, int dir, double str) {
 
 void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape) {
 
+    //std::cout << this->position() << std::endl;
+
     MVMatrix = glm::scale(MVMatrix, glm::vec3(this->size(), this->size(), this->size()));
     MVMatrix = glm::translate(MVMatrix, this->position());
     MVMatrix = glm::rotate(MVMatrix, 1.f, this->angle());
@@ -275,7 +277,9 @@ void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix
     glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));    
 
     //glDrawArrays(GL_TRIANGLES, 0, this->shape().getVertexCount());
-    glDrawElements(GL_TRIANGLES, shape.getIndexCount(), GL_UNSIGNED_INT, 0);
+    //glDrawElements(GL_TRIANGLES, shape.getIndexCount(), GL_UNSIGNED_INT, 0);
+    //glDrawElements(GL_TRIANGLES, shape.getVertexCount(), GL_UNSIGNED_INT, NULL);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, shape.getVertexCount());
 
 }
 
@@ -514,9 +518,9 @@ void passTrough(Fish &fish) {
 int main(int argc, char** argv) {
 
     Geometry FishMesh;
-    FishMesh.loadOBJ("../assets/models/cube.obj", "../assets/models/cube.mtl");
+    FishMesh.loadOBJ("../assets/models/Fish.obj", "../assets/models/Fish.mtl");
 
-    std::cout << (0 == -0) << std::endl;
+    //std::cout << (0 == -0) << std::endl;
 
     // Initialize SDL and open a window
     float width  = 1280;
@@ -559,7 +563,8 @@ int main(int argc, char** argv) {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, 0);
-*/
+        */
+
 
         // Initialize shaderss
         FilePath applicationPath(argv[0]);
@@ -629,13 +634,13 @@ int main(int argc, char** argv) {
             glBindBuffer(GL_ARRAY_BUFFER,vbo);
                 glVertexAttribPointer(VERTEX_ATTR_POSITION, 
                     3, GL_FLOAT, GL_FALSE, 
-                    sizeof(float),0);
+                    sizeof(Geometry::Vertex),0);
                 glVertexAttribPointer(VERTEX_ATTR_NORMAL,
                     3, GL_FLOAT, GL_FALSE, 
-                    sizeof(float),(void*) (sizeof(glm::vec3)));
+                    sizeof(Geometry::Vertex),(void*) (sizeof(glm::vec3)));
                 glVertexAttribPointer(VERTEX_ATTR_TEXTURE,
                     2, GL_FLOAT, GL_FALSE, 
-                    sizeof(float),(void*) (2*sizeof(glm::vec3)));
+                    sizeof(Geometry::Vertex),(void*) (2*sizeof(glm::vec3)));
             glBindBuffer(GL_ARRAY_BUFFER,0);
 
         glBindVertexArray(0);
@@ -727,8 +732,9 @@ int main(int argc, char** argv) {
                     separation(playerFish, fish);
                     alignment(playerFish, fish);
                     //wallSeparation(fish);
-
+                    //glBindTexture(GL_TEXTURE_2D, moon);
                     fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh);    
+                    //glBindTexture(GL_TEXTURE_3D, 0);
 
                     //std::cout << fish.angle() << std::endl;
                     //std::cout << fish.position() << std::endl;
