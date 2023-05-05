@@ -13,7 +13,8 @@
 #include <glimac/Image.hpp>
 #include <glimac/Geometry.hpp>
 #include <math.h>
-#include <SDL.h>
+#include <SDL/SDL.h>
+#include <glimac/trackBallCamera.hpp>
 
 //                                                         BEST VALUES
 const unsigned int FISH_NUMBER = 150; //                    peu, entre 10 et 15 ça me semble pas mal ?
@@ -495,14 +496,26 @@ int main(int argc, char** argv) {
         
     /*********************************/
 
+    // création des fishes
     std::vector<Fish> fishherd = createHerd(FISH_NUMBER);
     Fish playerFish = Fish(glm::vec3(0), glm::vec3(0, 0, -1), .2, .2, Sphere(1, 32, 16), 10000);
 
+    // création de la caméra
+    Camera camera = Camera();
+
+    // gestion des inputs pour le fish doré
     bool moveUp = false;
     bool moveDown = false;
     bool moveLeft = false;
     bool moveRight = false;
 
+    // gestion des imputs clavier pour la caméra
+    bool camUp = false;
+    bool camDown = false;
+    bool camLeft = false;
+    bool camRight = false;
+    bool camFront = false;
+    bool camBack = false;
 
     // Application loop:
     bool done = false;
@@ -512,19 +525,25 @@ int main(int argc, char** argv) {
         while(windowManager.pollEvent(e)) {
             if(e.type == SDL_QUIT) {
                 done = true; // Leave the loop after this iteration
-            }
+            } 
         }
 
         /*********************************/
            // RENDERING CODE
+
+            // camera
+            glm::mat4 viewMatrix = camera.getViewMatrix();
+
+            // std::cout << viewMatrix << std::endl;
+
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             glBindVertexArray(vao);
                 // Initialize Render Matrix  
                 glm::mat4 ProjMatrix = glm::perspective(glm::radians(100.f), (GLfloat)width/(GLfloat)height, 0.1f, 100.f);
                     // View angle, ratio width/height, nearest depth, furthest depth
-                glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1))
-                , glm::vec3(0,0,-5));
+                // glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));
+                glm::mat4 MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
                     // On voit du coté négatif des Z par défaut en OpenGL
                 glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
@@ -563,7 +582,8 @@ int main(int argc, char** argv) {
 
                 for (Fish &fish : fishherd) {
 
-                    glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));                   
+                    //glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));                   
+                    glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
                     
                     MVMatrix = fish.move(MVMatrix, windowManager);
                     passTrough(fish);
@@ -593,11 +613,14 @@ int main(int argc, char** argv) {
                 passTrough(playerFish);
                 playerFish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh, goldenSkin);
 
+
+                // faudra ranger ça un peu mieux
                 while (windowManager.pollEvent(e)) {
                     if (e.type == SDL_QUIT) {
                         done = true;
                     } else if (e.type == SDL_KEYDOWN) {
                         switch (e.key.keysym.sym) {
+                            // fish doré
                             case SDLK_UP:
                                 moveDown = true;
                                 break;
@@ -609,9 +632,30 @@ int main(int argc, char** argv) {
                                 break;
                             case SDLK_RIGHT:
                                 moveRight = true;
+                                break;
+                            // camera clavier
+                            case SDLK_z:
+                                camUp = true;
+                                break;
+                            case SDLK_s:
+                                camDown = true;
+                                break;
+                            case SDLK_q:
+                                camLeft = true;
+                                break;
+                            case SDLK_d:
+                                camRight = true;
+                                break;
+                            case SDLK_r:
+                                camFront = true;
+                                break;
+                            case SDLK_f:
+                                camBack = true;
+                                break;
                         }
                     } else if (e.type == SDL_KEYUP) {
                         switch (e.key.keysym.sym) {
+                            // fish doré
                             case SDLK_UP:
                                 moveDown = false;
                                 break;
@@ -623,10 +667,34 @@ int main(int argc, char** argv) {
                                 break;
                             case SDLK_RIGHT:
                                 moveRight = false;
+                            // camera clavier
+                            case SDLK_z:
+                                camUp = false;
+                                break;
+                            case SDLK_s:
+                                camDown = false;
+                                break;
+                            case SDLK_q:
+                                camLeft = false;
+                                break;
+                            case SDLK_d:
+                                camRight = false;
+                                break;
+                            case SDLK_r:
+                                std::cout << "aa" << std::endl;
+                                camFront = false;
+                                break;
+                            case SDLK_f:
+                                camBack = false;
+                                break;
                         }
+                    } else if (e.type == SDL_MOUSEMOTION) {
+                        camera.rotateLeft(e.motion.xrel);
+                        camera.rotateUp(e.motion.yrel);
                     }
                 }
 
+                // par contre ça en vrai ça peut rester là
                 if (moveUp) {
                     playerFish.turn(0, 1, 10);
                 }
@@ -641,6 +709,30 @@ int main(int argc, char** argv) {
 
                 if (moveRight) {
                     playerFish.turn(2, 1, 10);
+                }
+
+                if (camFront) {
+                    camera.moveFront(-.1);
+                }
+
+                if (camBack) {
+                    camera.moveFront(.1);
+                }
+
+                if (camUp) {
+                    camera.rotateUp(1);
+                }
+
+                if (camDown) {
+                    camera.rotateUp(-1);
+                }
+
+                if (camLeft) {
+                    camera.rotateLeft(1);
+                }
+
+                if (camRight) {
+                    camera.rotateLeft(-1);
                 }
 
 
