@@ -85,8 +85,8 @@ std::vector<Fish> createHerd(const unsigned int fishNumber) {
         // glm::vec3 position = glm::vec3(glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size));
         glm::vec3 position = glm::vec3(glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA));
         // std::cout << position << std::endl;
-        glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
-        //glm::vec3 angle = glm::vec3(0, 0, -1);
+        // glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
+        glm::vec3 angle = glm::vec3(0, 0, -1);
         double speed = SPEED;
         Sphere shape = Sphere(1.f, 32, 16);
         fishherd.push_back(Fish(position, angle, speed, size, shape, i));
@@ -351,6 +351,7 @@ int main(int argc, char** argv) {
 
     Geometry FishMesh;
     FishMesh.loadOBJ("../assets/models/Fish.obj", "../assets/models/Fish.mtl");
+    //FishMesh.loadOBJ("../assets/models/FishOriented.obj", "../assets/models/FishOriented.mtl");
 
     Geometry BGCube;
     BGCube.loadOBJ("../assets/models/cube.obj", "../assets/models/cube.mtl");
