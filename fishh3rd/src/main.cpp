@@ -537,6 +537,7 @@ int main(int argc, char** argv) {
             // std::cout << viewMatrix << std::endl;
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glClearColor(0.f, 0.f, 0.3f, 1.f);
 
             glBindVertexArray(vao);
                 // Initialize Render Matrix  
