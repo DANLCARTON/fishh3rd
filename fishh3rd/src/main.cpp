@@ -352,6 +352,9 @@ int main(int argc, char** argv) {
     Geometry FishMesh;
     FishMesh.loadOBJ("../assets/models/Fish.obj", "../assets/models/Fish.mtl");
 
+    Geometry BGCube;
+    BGCube.loadOBJ("../assets/models/cube.obj", "../assets/models/cube.mtl");
+
     //std::cout << (0 == -0) << std::endl;
 
     // Initialize SDL and open a window
@@ -375,6 +378,11 @@ int main(int argc, char** argv) {
         // Initialize depth test
         // Permet de gérer les différents plans de la scène 
         glEnable(GL_DEPTH_TEST);
+
+        /*
+        glEnable(GL_BLEND); //Enable blending.
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+        */
 
         // textures
         std::unique_ptr<Image> fishSkinBlueMap = loadImage("../assets/textures/FishSkinBlue.jpg");
@@ -412,6 +420,16 @@ int main(int argc, char** argv) {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, 0);
+
+        std::unique_ptr<Image> waterMap = loadImage("../assets/textures/waterAlpha.png");
+        GLuint water;
+        glGenTextures(1, &water);
+        glBindTexture(GL_TEXTURE_2D, water);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, waterMap->getWidth(), waterMap->getHeight(), 0, GL_RGBA, GL_FLOAT, waterMap->getPixels());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
 
 
         // Initialize shaderss
@@ -458,6 +476,12 @@ int main(int argc, char** argv) {
             //glBufferData(GL_ARRAY_BUFFER, vertex_data.size()*sizeof(float), vertex_data.data(), GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+        GLuint vbo2;
+        glGenBuffers(2, &vbo2);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo2);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(Geometry::Vertex)*BGCube.getVertexCount(), BGCube.getVertexBuffer(), GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 
         GLuint ebo;
         glGenBuffers(1, &ebo);
@@ -487,6 +511,33 @@ int main(int argc, char** argv) {
                     3, GL_FLOAT, GL_FALSE, 
                     sizeof(Geometry::Vertex),(void*) (sizeof(glm::vec3)));
                 glVertexAttribPointer(VERTEX_ATTR_TEXTURE,
+                    2, GL_FLOAT, GL_FALSE, 
+                    sizeof(Geometry::Vertex),(void*) (2*sizeof(glm::vec3)));
+            glBindBuffer(GL_ARRAY_BUFFER,0);
+
+        glBindVertexArray(0);
+
+        GLuint vao2;
+        glGenVertexArrays(1, &vao2);
+        glBindVertexArray(vao2);
+
+            const GLuint VERTEX_ATTR_POSITION2=0;
+            glEnableVertexAttribArray(VERTEX_ATTR_POSITION2);
+
+            const GLuint VERTEX_ATTR_NORMAL2=1;
+            glEnableVertexAttribArray(VERTEX_ATTR_NORMAL2);
+
+            const GLuint VERTEX_ATTR_TEXTURE2=2;
+            glEnableVertexAttribArray(VERTEX_ATTR_TEXTURE2);
+
+            glBindBuffer(GL_ARRAY_BUFFER,vbo2);
+                glVertexAttribPointer(VERTEX_ATTR_POSITION2, 
+                    3, GL_FLOAT, GL_FALSE, 
+                    sizeof(Geometry::Vertex),0);
+                glVertexAttribPointer(VERTEX_ATTR_NORMAL2,
+                    3, GL_FLOAT, GL_FALSE, 
+                    sizeof(Geometry::Vertex),(void*) (sizeof(glm::vec3)));
+                glVertexAttribPointer(VERTEX_ATTR_TEXTURE2,
                     2, GL_FLOAT, GL_FALSE, 
                     sizeof(Geometry::Vertex),(void*) (2*sizeof(glm::vec3)));
             glBindBuffer(GL_ARRAY_BUFFER,0);
@@ -584,7 +635,7 @@ int main(int argc, char** argv) {
                 for (Fish &fish : fishherd) {
 
                     //glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));                   
-                    glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
+                    glm::mat4 MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
                     
                     MVMatrix = fish.move(MVMatrix, windowManager);
                     passTrough(fish);
@@ -614,8 +665,34 @@ int main(int argc, char** argv) {
                 passTrough(playerFish);
                 playerFish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh, goldenSkin);
 
+            glBindVertexArray(0);
+
+            // draw cube aire de jeu
+            glBindVertexArray(vao2);
+                MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
+                MVMatrix = glm::scale(MVMatrix, glm::vec3(10.f, 10.f, 10.f));
+                MVMatrix = glm::translate(MVMatrix, glm::vec3(-1.f, -1.f, -1.f));
+
+                glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+                glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
+                glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+
+                glBindTexture(GL_TEXTURE_2D, water);
+                    glDrawArrays(GL_LINES, 0, BGCube.getVertexCount());       
+                    MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
+                    MVMatrix = glm::scale(MVMatrix, glm::vec3(10.f, 10.f, 10.f));
+                    MVMatrix = glm::rotate(MVMatrix, glm::radians(90.0f), glm::vec3(0.f, 0.f, 1.f));
+                    MVMatrix = glm::translate(MVMatrix, glm::vec3(-1.f, -1.f, -1.f));     
+                    glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+                    glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
+                    glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+                    glDrawArrays(GL_LINES, 0, BGCube.getVertexCount());            
+                glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+
 
                 // faudra ranger ça un peu mieux
+                // on fera peut-être ça un jour
                 while (windowManager.pollEvent(e)) {
                     if (e.type == SDL_QUIT) {
                         done = true;
@@ -682,7 +759,6 @@ int main(int argc, char** argv) {
                                 camRight = false;
                                 break;
                             case SDLK_r:
-                                std::cout << "aa" << std::endl;
                                 camFront = false;
                                 break;
                             case SDLK_f:
@@ -735,10 +811,6 @@ int main(int argc, char** argv) {
                 if (camRight) {
                     camera.rotateLeft(-1);
                 }
-
-
-
-            glBindVertexArray(0);
         /*********************************/
 
         // Update the display
