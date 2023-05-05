@@ -30,12 +30,14 @@ const double WALLS_STRENGTH = 1; //                        1
 const double SPEED = 0.15; //                                 .15
 
 // - - - - - - OBJ MODELE 3D - - - - - -
+// - - - - - - EN FAIT NON - - - - - -
+
+/*
 
 std::vector<float> vertices;
 std::vector<float> normals;
 std::vector<unsigned int> indices;
 
-/*
 std::string inputfile = "Fish.obj";
 tinyobj::ObjReaderConfig reader_config;
 reader_config.mtl_search_path = "../assets/models"; // Path to material files
@@ -203,7 +205,7 @@ class Fish {
 
         glm::mat4 move(glm::mat4 MVMatrix, const SDLWindowManager &wm);
         void turn(int axis, int dir, double str);
-        void draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape);
+        void draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape, GLuint texture);
 };
 
 // - - - - - - P E T I T E S   F O N C T I O N S - - - - - -
@@ -219,7 +221,7 @@ double getAngle(double a, double b) {
 std::vector<Fish> createHerd(const unsigned int fishNumber) {
     std::vector<Fish> fishherd;
     for (unsigned int i = 0; i < fishNumber; ++i) {
-        double size = .1;
+        double size = .2;
         // glm::vec3 position = glm::vec3(glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size));
         glm::vec3 position = glm::vec3(glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA));
         // std::cout << position << std::endl;
@@ -264,7 +266,7 @@ void Fish::turn(int axis, int dir, double str) {
     this->m_angle = newAngle;
 }
 
-void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape) {
+void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape, GLuint texture) {
 
     //std::cout << this->position() << std::endl;
 
@@ -279,7 +281,10 @@ void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix
     //glDrawArrays(GL_TRIANGLES, 0, this->shape().getVertexCount());
     //glDrawElements(GL_TRIANGLES, shape.getIndexCount(), GL_UNSIGNED_INT, 0);
     //glDrawElements(GL_TRIANGLES, shape.getVertexCount(), GL_UNSIGNED_INT, NULL);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, shape.getVertexCount());
+    
+    glBindTexture(GL_TEXTURE_2D, texture);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, shape.getVertexCount());
+    glBindTexture(GL_TEXTURE_2D, 0);
 
 }
 
@@ -480,39 +485,6 @@ void passTrough(Fish &fish) {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // - - - - - - M A I N - - - - - -
 
 int main(int argc, char** argv) {
@@ -566,10 +538,47 @@ int main(int argc, char** argv) {
         */
 
 
+        std::unique_ptr<Image> fishSkinBlueMap = loadImage("../assets/textures/FishSkinBlue.jpg");
+        GLuint blueSkin;
+        glGenTextures(1, &blueSkin);
+        glBindTexture(GL_TEXTURE_2D, blueSkin);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinBlueMap->getWidth(), fishSkinBlueMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinBlueMap->getPixels());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        std::unique_ptr<Image> fishSkinGreenMap = loadImage("../assets/textures/FishSkinGreen.jpg");
+        GLuint greenSkin;
+        glGenTextures(1, &greenSkin);
+        glBindTexture(GL_TEXTURE_2D, greenSkin);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinGreenMap->getWidth(), fishSkinGreenMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinGreenMap->getPixels());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        std::unique_ptr<Image> fishSkinRedMap = loadImage("../assets/textures/FishSkinRed.jpg");
+        GLuint redSkin;
+        glGenTextures(1, &redSkin);
+        glBindTexture(GL_TEXTURE_2D, redSkin);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinRedMap->getWidth(), fishSkinRedMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinRedMap->getPixels());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        std::unique_ptr<Image> fishSkinGoldenMap = loadImage("../assets/textures/FishSkinGold.jpg");
+        GLuint goldenSkin;
+        glGenTextures(1, &goldenSkin);
+        glBindTexture(GL_TEXTURE_2D, goldenSkin);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinGoldenMap->getWidth(), fishSkinGoldenMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinGoldenMap->getPixels());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+
         // Initialize shaderss
         FilePath applicationPath(argv[0]);
         Program program = loadProgram(applicationPath.dirPath() + "shaders/3D.vs.glsl",
-                                    applicationPath.dirPath() + "shaders/normals.fs.glsl");
+                                    applicationPath.dirPath() + "shaders/tex3D.fs.glsl");
         program.use();
 
         // Initilize Uniform Variables
@@ -732,9 +741,11 @@ int main(int argc, char** argv) {
                     separation(playerFish, fish);
                     alignment(playerFish, fish);
                     //wallSeparation(fish);
-                    //glBindTexture(GL_TEXTURE_2D, moon);
-                    fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh);    
-                    //glBindTexture(GL_TEXTURE_3D, 0);
+                    GLuint texture;
+                    if (fish.id % 3 == 0) texture = blueSkin;
+                    if (fish.id % 3 == 1) texture = greenSkin;
+                    if (fish.id % 3 == 2) texture = redSkin;
+                    fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh, texture);
 
                     //std::cout << fish.angle() << std::endl;
                     //std::cout << fish.position() << std::endl;
@@ -742,7 +753,7 @@ int main(int argc, char** argv) {
 
                 MVMatrix = playerFish.move(MVMatrix, windowManager);
                 passTrough(playerFish);
-                playerFish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh);
+                playerFish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh, goldenSkin);
 
                 while (windowManager.pollEvent(e)) {
                     if (e.type == SDL_QUIT) {
@@ -750,10 +761,10 @@ int main(int argc, char** argv) {
                     } else if (e.type == SDL_KEYDOWN) {
                         switch (e.key.keysym.sym) {
                             case SDLK_UP:
-                                moveUp = true;
+                                moveDown = true;
                                 break;
                             case SDLK_DOWN:
-                                moveDown = true;
+                                moveUp = true;
                                 break;
                             case SDLK_LEFT:
                                 moveLeft = true;
@@ -764,10 +775,10 @@ int main(int argc, char** argv) {
                     } else if (e.type == SDL_KEYUP) {
                         switch (e.key.keysym.sym) {
                             case SDLK_UP:
-                                moveUp = false;
+                                moveDown = false;
                                 break;
                             case SDLK_DOWN:
-                                moveDown = false;
+                                moveUp = false;
                                 break;
                             case SDLK_LEFT:
                                 moveLeft = false;
