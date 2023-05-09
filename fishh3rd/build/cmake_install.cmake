@@ -1,4 +1,4 @@
-# Install script for directory: /home/6ima2/eric.thiberge/fishh3rd/fishh3rd
+# Install script for directory: /home/eric/fishh3rd/fishh3rd
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -37,15 +37,10 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "FALSE")
 endif()
 
-# Set default install directory permissions.
-if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "/usr/bin/objdump")
-endif()
-
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/6ima2/eric.thiberge/fishh3rd/fishh3rd/build/glimac/cmake_install.cmake")
-  include("/home/6ima2/eric.thiberge/fishh3rd/fishh3rd/build/src/cmake_install.cmake")
+  include("/home/eric/fishh3rd/fishh3rd/build/glimac/cmake_install.cmake")
+  include("/home/eric/fishh3rd/fishh3rd/build/src/cmake_install.cmake")
 
 endif()
 
@@ -57,5 +52,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/6ima2/eric.thiberge/fishh3rd/fishh3rd/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/eric/fishh3rd/fishh3rd/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

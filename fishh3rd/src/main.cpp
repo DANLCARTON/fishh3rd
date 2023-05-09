@@ -81,7 +81,7 @@ double getAngle(double a, double b) {
 std::vector<Fish> createHerd(const unsigned int fishNumber) {
     std::vector<Fish> fishherd;
     for (unsigned int i = 0; i < fishNumber; ++i) {
-        double size = .2;
+        double size = .4;
         // glm::vec3 position = glm::vec3(glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size));
         glm::vec3 position = glm::vec3(glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA));
         // std::cout << position << std::endl;
@@ -333,7 +333,7 @@ void wallSeparation(Fish &fish) {
 
 // y'a très certainement mieux à faire mais ça fera le taf pour l'instant. 
 void passTrough(Fish &fish) {
-    const double realFishArea = AREA+20;
+    const double realFishArea = (AREA+20)*(fish.size()+.1);
     if (fish.position()[0] >= realFishArea || fish.position()[0] <= -realFishArea) {
         fish.position(glm::vec3(-fish.position()[0]+sign(fish.position()[0])*3, fish.position()[1], fish.position()[2]));
     }
@@ -550,7 +550,7 @@ int main(int argc, char** argv) {
 
     // création des fishes
     std::vector<Fish> fishherd = createHerd(FISH_NUMBER);
-    Fish playerFish = Fish(glm::vec3(0), glm::vec3(0, 0, -1), .2, .2, Sphere(1, 32, 16), 10000);
+    Fish playerFish = Fish(glm::vec3(0), glm::vec3(0, 0, -1), .15, .4, Sphere(1, 32, 16), 10000);
 
     // création de la caméra
     Camera camera = Camera();
@@ -593,7 +593,7 @@ int main(int argc, char** argv) {
 
             glBindVertexArray(vao);
                 // Initialize Render Matrix  
-                glm::mat4 ProjMatrix = glm::perspective(glm::radians(100.f), (GLfloat)width/(GLfloat)height, 0.1f, 100.f);
+                glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), (GLfloat)width/(GLfloat)height, 0.1f, 100.f);
                     // View angle, ratio width/height, nearest depth, furthest depth
                 // glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));
                 glm::mat4 MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
