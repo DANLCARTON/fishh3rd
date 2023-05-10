@@ -17,7 +17,7 @@
 #include <glimac/trackBallCamera.hpp>
 
 //                                                         BEST VALUES
-const unsigned int FISH_NUMBER = 150; //                    peu, entre 10 et 15 ça me semble pas mal ?
+const unsigned int FISH_NUMBER = 200; //                    peu, entre 10 et 15 ça me semble pas mal ?
 const double AREA = 30.f; //                                    20.f
 const double TURN_FACTOR = .005; //                         0.01
 const double SEPARATION_RADIUS = 5; //                     10
@@ -53,7 +53,7 @@ class Fish {
         ~Fish() = default;
         
         glm::vec3 position() {return this->m_position;};
-        void position(glm::vec3 newPosition) {m_position = newPosition;};
+        void position(glm::vec3 newPosition) {m_position = newPosition;};   
         glm::vec3 angle() {return this->m_angle;};
         void angle(glm::vec3 newAngle) {m_angle = newAngle;};
         double speed() {return this->m_speed;};
@@ -63,9 +63,10 @@ class Fish {
         Sphere shape() {return this->m_shape;};
         void shape(Sphere newShape) {m_shape = newShape;};
 
-        glm::mat4 move(glm::mat4 MVMatrix, const SDLWindowManager &wm);
+        void move(const SDLWindowManager &wm);
         void turn(int axis, int dir, double str);
         void draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape, GLuint texture);
+        glm::mat4 getRotationMatrix() const;
 };
 
 // - - - - - - P E T I T E S   F O N C T I O N S - - - - - -
@@ -94,11 +95,10 @@ std::vector<Fish> createHerd(const unsigned int fishNumber) {
     return fishherd;
 }
 
-glm::mat4 Fish::move(glm::mat4 MVMatrix, const SDLWindowManager &wm) {
+void Fish::move(const SDLWindowManager &wm) {
     // MVMatrix = glm::translate(MVMatrix, this->angle()*(wm.getTime()+1));
     this->position(this->position()+(this->angle()*glm::vec3(this->speed())));
     // std::cout << this->position() << this->angle() << std::endl;
-    return MVMatrix;
 }
 
 void Fish::turn(int axis, int dir, double str) {
@@ -131,8 +131,12 @@ void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix
     //std::cout << this->position() << std::endl;
 
     MVMatrix = glm::scale(MVMatrix, glm::vec3(this->size(), this->size(), this->size()));
+    // MVMatrix            = glm::translate(glm::mat4(1.0f), this->position());
     MVMatrix = glm::translate(MVMatrix, this->position());
-    MVMatrix = glm::rotate(MVMatrix, 1.f, this->angle());
+    glm::mat4 rotMatrix = this->getRotationMatrix();
+    MVMatrix            = MVMatrix * rotMatrix;
+    //MVMatrix = glm::translate(MVMatrix, this->position());
+    //MVMatrix = glm::rotate(MVMatrix, 1.f, this->angle());
 
     glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
     glUniformMatrix4fv(uMVProjMatrixLocarion, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
@@ -146,6 +150,22 @@ void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix
         glDrawArrays(GL_TRIANGLE_FAN, 0, shape.getVertexCount());
     glBindTexture(GL_TEXTURE_2D, 0);
 
+}
+
+glm::mat4 Fish::getRotationMatrix() const {
+    glm::vec3 originalVec = {0, 0, -1};
+    glm::vec3 targetVec   = this->m_angle;
+
+    glm::vec3 axis  = glm::cross(originalVec, targetVec);
+    float     angle = glm::acos(glm::dot(originalVec, targetVec) / (glm::length(originalVec) * glm::length(targetVec)));
+
+    glm::mat4 rotMatrix = glm::mat4(1.0f);
+    if (angle != 0 && !glm::isnan(angle))
+    {
+        rotMatrix = glm::rotate(rotMatrix, angle, glm::normalize(axis));
+    }
+
+    return rotMatrix;
 }
 
 double distance(Fish &fish, Fish &otherFish) {
@@ -350,7 +370,7 @@ void passTrough(Fish &fish) {
 int main(int argc, char** argv) {
 
     Geometry FishMesh;
-    FishMesh.loadOBJ("../assets/models/Fish.obj", "../assets/models/Fish.mtl");
+    FishMesh.loadOBJ("../assets/models/Fish2.obj", "../assets/models/Fish2.mtl");
     //FishMesh.loadOBJ("../assets/models/FishOriented.obj", "../assets/models/FishOriented.mtl");
 
     Geometry BGCube;
@@ -359,8 +379,8 @@ int main(int argc, char** argv) {
     //std::cout << (0 == -0) << std::endl;
 
     // Initialize SDL and open a window
-    float width  = 1280;
-    float height = 720; 
+    float width  = 1600;
+    float height = 700; 
     SDLWindowManager windowManager(width, height, "✨𝐅𝐈𝐒𝐇𝐇𝟑𝐑𝐃✨");
 
     // Initialize glew for OpenGL3+ support
@@ -592,10 +612,12 @@ int main(int argc, char** argv) {
             glClearColor(0.f, 0.f, 0.3f, 1.f);
 
             glBindVertexArray(vao);
+            
                 // Initialize Render Matrix  
-                glm::mat4 ProjMatrix = glm::perspective(glm::radians(70.f), (GLfloat)width/(GLfloat)height, 0.1f, 100.f);
+                glm::mat4 ProjMatrix = glm::perspective(glm::radians(90.f), (GLfloat)width/(GLfloat)height, 0.1f, 100.f);
                     // View angle, ratio width/height, nearest depth, furthest depth
                 // glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));
+                
                 glm::mat4 MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
                     // On voit du coté négatif des Z par défaut en OpenGL
                 glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
@@ -638,7 +660,7 @@ int main(int argc, char** argv) {
                     //glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));                   
                     glm::mat4 MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
                     
-                    MVMatrix = fish.move(MVMatrix, windowManager);
+                    fish.move(windowManager);
                     passTrough(fish);
                     
 
@@ -662,7 +684,7 @@ int main(int argc, char** argv) {
                     //std::cout << fish.position() << std::endl;
                 }
 
-                MVMatrix = playerFish.move(MVMatrix, windowManager);
+                playerFish.move(windowManager);
                 passTrough(playerFish);
                 playerFish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh, goldenSkin);
 
