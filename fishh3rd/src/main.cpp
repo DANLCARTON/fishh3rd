@@ -675,9 +675,9 @@ int main(int argc, char** argv) {
                     alignment(playerFish, fish);
                     //wallSeparation(fish);
                     GLuint texture;
-                    if (fish.id % 3 == 0) texture = blueSkin;
-                    if (fish.id % 3 == 1) texture = greenSkin;
-                    if (fish.id % 3 == 2) texture = redSkin;
+                    if (fish.id % 6 == 0) texture = blueSkin;
+                    if (fish.id % 6 == 1) texture = greenSkin;
+                    if (fish.id % 6 == 2) texture = redSkin;
                     fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh, texture);
 
                     //std::cout << fish.angle() << std::endl;
