@@ -379,8 +379,8 @@ int main(int argc, char** argv) {
     //std::cout << (0 == -0) << std::endl;
 
     // Initialize SDL and open a window
-    float width  = 1920;
-    float height = 1040; 
+    float width  = 960;
+    float height = 960; 
     SDLWindowManager windowManager(width, height, "✨𝐅𝐈𝐒𝐇𝐇𝟑𝐑𝐃✨");
 
     // Initialize glew for OpenGL3+ support
@@ -492,7 +492,8 @@ int main(int argc, char** argv) {
         // Initialize shaderss
         FilePath applicationPath(argv[0]);
         Program program = loadProgram(applicationPath.dirPath() + "shaders/3D.vs.glsl",
-                                    applicationPath.dirPath() + "shaders/tex3D.fs.glsl");
+                                    //applicationPath.dirPath() + "shaders/tex3D.fs.glsl");
+                                    applicationPath.dirPath() + "shaders/directionallight.fs.glsl");
         program.use();
 
         // Initilize Uniform Variables
@@ -502,6 +503,21 @@ int main(int argc, char** argv) {
         GLint uNormalMatrixLocation=glGetUniformLocation(program.getGLId(), "uNormalMatrix");
 
         GLint mapLocation = glGetUniformLocation(program.getGLId(), "uTexture");
+
+        /*
+        uniform vec3 uKd;
+        uniform vec3 uKs;
+        uniform float uShininess;
+
+        uniform vec3 uLightDir_vs;
+        uniform vec3 uLightIntensity;
+        */
+
+        GLint uKdLocation = glGetUniformLocation(program.getGLId(), "uKd");
+        GLint uKsLocation = glGetUniformLocation(program.getGLId(), "uKs");
+        GLint uShininessLocation = glGetUniformLocation(program.getGLId(), "uShininess");
+        GLint uLightDir_vsLocation = glGetUniformLocation(program.getGLId(), "uLightDir_vs");
+        GLint uLightIntensityLocation = glGetUniformLocation(program.getGLId(), "uLightIntensity");
 
         /* 
         glm::perspective {
@@ -625,6 +641,8 @@ int main(int argc, char** argv) {
     bool camFront = false;
     bool camBack = false;
 
+    glm::mat4 vm2 = camera.getViewMatrix();
+
     // Application loop:
     bool done = false;
     while(!done) {
@@ -691,6 +709,16 @@ int main(int argc, char** argv) {
                 }
                 */
 
+                glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+                glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
+                glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+
+                glUniform3fv(uKdLocation, 1, glm::value_ptr(glm::vec3(0.f, 0.f, 0.f)));
+                glUniform3fv(uKsLocation, 1, glm::value_ptr(glm::vec3(0.f, 0.f, 1.f)));
+                glUniform1f(uShininessLocation, 1.f);
+                glUniform3fv(uLightDir_vsLocation, 1, glm::value_ptr(glm::vec4(0.f, 0.f, 0.f, 1.f)*viewMatrix));
+                glUniform3fv(uLightIntensityLocation, 1, glm::value_ptr(glm::vec3(0.f, 0.f, 1.f)));
+
                 for (Fish &fish : fishherd) {
 
                     //glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));                   
@@ -739,6 +767,17 @@ int main(int argc, char** argv) {
                 glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
                 glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
                 glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+
+                /*
+                GLint uKdLocation = glGetUniformLocation(program.getGLId(), "uKd");
+                GLint uKsLocation = glGetUniformLocation(program.getGLId(), "uKs");
+                GLint uShininessLocation = glGetUniformLocation(program.getGLId(), "uShininess");
+                GLint uLightDir_vsLocation = glGetUniformLocation(program.getGLId(), "uLightDir_vs");
+                GLint uLightIntensityLocation = glGetUniformLocation(program.getGLId(), "uLightIntensity")
+                */
+
+
+
 
                 glBindTexture(GL_TEXTURE_2D, water);
                     glDrawArrays(GL_LINES, 0, BGCube.getVertexCount());       
