@@ -1,1 +1,1 @@
-/usr/bin/c++ -rdynamic CMakeFiles/src_main.dir/main.cpp.o -o src_main  ../glimac/libglimac.a -Wl,-Bstatic -lSDLmain -Wl,-Bdynamic -lSDL -lpthread -lGL -lGLU /home/6ima2/eric.thiberge/F32/fishh3rd/third-party/libGLEW.a 
+/usr/bin/c++ -rdynamic CMakeFiles/src_main.dir/main.cpp.o -o src_main  ../glimac/libglimac.a -Wl,-Bstatic -lSDLmain -Wl,-Bdynamic -lSDL -lpthread -lGL -lGLU /home/6ima2/eric.thiberge/F33/fishh3rd/third-party/libGLEW.a 

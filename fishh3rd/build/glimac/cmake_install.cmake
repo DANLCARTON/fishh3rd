@@ -1,4 +1,4 @@
-# Install script for directory: /home/6ima2/eric.thiberge/F32/fishh3rd/glimac
+# Install script for directory: /home/6ima2/eric.thiberge/F33/fishh3rd/glimac
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

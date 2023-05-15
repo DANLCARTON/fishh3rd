@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/include/SDL -I/home/6ima2/eric.thiberge/F32/fishh3rd/glimac/include -I/home/6ima2/eric.thiberge/F32/fishh3rd/third-party/include
+CXX_INCLUDES = -I/usr/include/SDL -I/home/6ima2/eric.thiberge/F33/fishh3rd/glimac/include -I/home/6ima2/eric.thiberge/F33/fishh3rd/third-party/include
 
 CXX_FLAGS =   -std=c++11
 

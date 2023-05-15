@@ -379,8 +379,8 @@ int main(int argc, char** argv) {
     //std::cout << (0 == -0) << std::endl;
 
     // Initialize SDL and open a window
-    float width  = 1600;
-    float height = 700; 
+    float width  = 1920;
+    float height = 1040; 
     SDLWindowManager windowManager(width, height, "✨𝐅𝐈𝐒𝐇𝐇𝟑𝐑𝐃✨");
 
     // Initialize glew for OpenGL3+ support
@@ -406,7 +406,7 @@ int main(int argc, char** argv) {
         */
 
         // textures
-        std::unique_ptr<Image> fishSkinBlueMap = loadImage("../assets/textures/FishSkinBlue.jpg");
+        std::unique_ptr<Image> fishSkinBlueMap = loadImage("../assets/textures/Blue.jpg");
         GLuint blueSkin;
         glGenTextures(1, &blueSkin);
         glBindTexture(GL_TEXTURE_2D, blueSkin);
@@ -415,7 +415,7 @@ int main(int argc, char** argv) {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        std::unique_ptr<Image> fishSkinGreenMap = loadImage("../assets/textures/FishSkinGreen.jpg");
+        std::unique_ptr<Image> fishSkinGreenMap = loadImage("../assets/textures/Green.jpg");
         GLuint greenSkin;
         glGenTextures(1, &greenSkin);
         glBindTexture(GL_TEXTURE_2D, greenSkin);
@@ -424,7 +424,7 @@ int main(int argc, char** argv) {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        std::unique_ptr<Image> fishSkinRedMap = loadImage("../assets/textures/FishSkinRed.jpg");
+        std::unique_ptr<Image> fishSkinRedMap = loadImage("../assets/textures/Red.jpg");
         GLuint redSkin;
         glGenTextures(1, &redSkin);
         glBindTexture(GL_TEXTURE_2D, redSkin);
@@ -433,7 +433,43 @@ int main(int argc, char** argv) {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        std::unique_ptr<Image> fishSkinGoldenMap = loadImage("../assets/textures/FishSkinGold.jpg");
+        std::unique_ptr<Image> fishSkinPinkMap = loadImage("../assets/textures/Pink.jpg");
+        GLuint pinkSkin;
+        glGenTextures(1, &pinkSkin);
+        glBindTexture(GL_TEXTURE_2D, pinkSkin);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinPinkMap->getWidth(), fishSkinPinkMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinPinkMap->getPixels());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        std::unique_ptr<Image> fishSkinCyanMap = loadImage("../assets/textures/Cyan.jpg");
+        GLuint cyanSkin;
+        glGenTextures(1, &cyanSkin);
+        glBindTexture(GL_TEXTURE_2D, cyanSkin);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinCyanMap->getWidth(), fishSkinCyanMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinCyanMap->getPixels());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        std::unique_ptr<Image> fishSkinYellowMap = loadImage("../assets/textures/Yellow.jpg");
+        GLuint yellowSkin;
+        glGenTextures(1, &yellowSkin);
+        glBindTexture(GL_TEXTURE_2D, yellowSkin);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinYellowMap->getWidth(), fishSkinYellowMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinYellowMap->getPixels());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        std::unique_ptr<Image> fishSkinSilverMap = loadImage("../assets/textures/Silver.jpg");
+        GLuint silverSkin;
+        glGenTextures(1, &silverSkin);
+        glBindTexture(GL_TEXTURE_2D, silverSkin);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinSilverMap->getWidth(), fishSkinSilverMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinSilverMap->getPixels());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        std::unique_ptr<Image> fishSkinGoldenMap = loadImage("../assets/textures/Gold.jpg");
         GLuint goldenSkin;
         glGenTextures(1, &goldenSkin);
         glBindTexture(GL_TEXTURE_2D, goldenSkin);
@@ -678,6 +714,10 @@ int main(int argc, char** argv) {
                     if (fish.id % 6 == 0) texture = blueSkin;
                     if (fish.id % 6 == 1) texture = greenSkin;
                     if (fish.id % 6 == 2) texture = redSkin;
+                    if (fish.id % 6 == 3) texture = pinkSkin;
+                    if (fish.id % 6 == 4) texture = cyanSkin;
+                    if (fish.id % 6 == 5) texture = yellowSkin;
+                    //if (fish.id % 7 == 6) texture = silverSkin;
                     fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh, texture);
 
                     //std::cout << fish.angle() << std::endl;
