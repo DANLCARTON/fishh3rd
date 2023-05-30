@@ -128,6 +128,18 @@ glm/gtx/io.hpp
 glm/gtc/random.hpp
 -
 
+../glimac/include/glimac/inputs.hpp
+vector
+-
+glimac/trackBallCamera.hpp
+-
+glimac/fish.hpp
+-
+glimac/glm.hpp
+-
+common.hpp
+../glimac/include/glimac/common.hpp
+
 ../glimac/include/glimac/rock.hpp
 vector
 -
@@ -141,6 +153,8 @@ common.hpp
 ../glimac/include/glimac/common.hpp
 
 ../glimac/include/glimac/trackBallCamera.hpp
+glimac/glm.hpp
+-
 
 ../glimac/include/glimac/walls.hpp
 vector
@@ -942,5 +956,7 @@ glimac/walls.hpp
 glimac/assets.hpp
 -
 glimac/VAO_VBO.hpp
+-
+glimac/inputs.hpp
 -
 

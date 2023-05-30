@@ -21,6 +21,7 @@
 #include <glimac/walls.hpp>
 #include <glimac/assets.hpp>
 #include <glimac/VAO_VBO.hpp>
+#include <glimac/inputs.hpp>
 
 //                                                         BEST VALUES
 const unsigned int FISH_NUMBER = 200; //                    peu, entre 10 et 15 ça me semble pas mal ?
@@ -215,20 +216,6 @@ int main(int argc, char** argv) {
     // création de la caméra
     Camera camera = Camera();
 
-    // gestion des inputs pour le fish doré
-    bool moveUp = false;
-    bool moveDown = false;
-    bool moveLeft = false;
-    bool moveRight = false;
-
-    // gestion des imputs clavier pour la caméra
-    bool camUp = false;
-    bool camDown = false;
-    bool camLeft = false;
-    bool camRight = false;
-    bool camFront = false;
-    bool camBack = false;
-
     glm::mat4 vm2 = camera.getViewMatrix();
 
     // Application loop:
@@ -355,126 +342,16 @@ int main(int argc, char** argv) {
                 }
             glBindVertexArray(0);
 
-                // faudra ranger ça un peu mieux
-                // on fera peut-être ça un jour
-                while (windowManager.pollEvent(e)) {
-                    if (e.type == SDL_QUIT) {
-                        done = true;
-                    } else if (e.type == SDL_KEYDOWN) {
-                        switch (e.key.keysym.sym) {
-                            // fish doré
-                            case SDLK_UP:
-                                moveDown = true;
-                                break;
-                            case SDLK_DOWN:
-                                moveUp = true;
-                                break;
-                            case SDLK_LEFT:
-                                moveLeft = true;
-                                break;
-                            case SDLK_RIGHT:
-                                moveRight = true;
-                                break;
-                            // camera clavier
-                            case SDLK_z:
-                                camUp = true;
-                                break;
-                            case SDLK_s:    
-                                camDown = true;
-                                break;
-                            case SDLK_q:
-                                camLeft = true;
-                                break;
-                            case SDLK_d:
-                                camRight = true;
-                                break;
-                            case SDLK_r:
-                                camFront = true;
-                                break;
-                            case SDLK_f:
-                                camBack = true;
-                                break;
-                        }
-                    } else if (e.type == SDL_KEYUP) {
-                        switch (e.key.keysym.sym) {
-                            // fish doré
-                            case SDLK_UP:
-                                moveDown = false;
-                                break;
-                            case SDLK_DOWN:
-                                moveUp = false;
-                                break;
-                            case SDLK_LEFT:
-                                moveLeft = false;
-                                break;
-                            case SDLK_RIGHT:
-                                moveRight = false;
-                            // camera clavier
-                            case SDLK_z:
-                                camUp = false;
-                                break;
-                            case SDLK_s:
-                                camDown = false;
-                                break;
-                            case SDLK_q:
-                                camLeft = false;
-                                break;
-                            case SDLK_d:
-                                camRight = false;
-                                break;
-                            case SDLK_r:
-                                camFront = false;
-                                break;
-                            case SDLK_f:
-                                camBack = false;
-                                break;
-                        }
-                    } else if (e.type == SDL_MOUSEMOTION) {
-                        camera.rotateLeft(e.motion.xrel);
-                        camera.rotateUp(e.motion.yrel);
-                    }
-                }
 
-                // par contre ça en vrai ça peut rester là
-                if (moveUp) {
-                    playerFish.turn(0, 1, 10, TURN_FACTOR);
-                }
 
-                if (moveDown) {
-                    playerFish.turn(0, -1, 10, TURN_FACTOR);
-                }
 
-                if (moveLeft) {
-                    playerFish.turn(2, -1, 10, TURN_FACTOR);
-                }
 
-                if (moveRight) {
-                    playerFish.turn(2, 1, 10, TURN_FACTOR);
-                }
+        if (e.type != SDL_QUIT) {
+            SDLinputs(windowManager, TURN_FACTOR, camera, playerFish, e);
+        }
 
-                if (camFront) {
-                    camera.moveFront(-.1);
-                }
-
-                if (camBack) {
-                    camera.moveFront(.1);
-                }
-
-                if (camUp) {
-                    camera.rotateUp(1);
-                }
-
-                if (camDown) {
-                    camera.rotateUp(-1);
-                }
-
-                if (camLeft) {
-                    camera.rotateLeft(1);
-                }
-
-                if (camRight) {
-                    camera.rotateLeft(-1);
-                }
+        
+                
         /*********************************/
 
         // Update the display

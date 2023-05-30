@@ -422,6 +422,33 @@ src/fish.cpp.s:
 	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/fish.cpp.s
 .PHONY : src/fish.cpp.s
 
+src/inputs.o: src/inputs.cpp.o
+
+.PHONY : src/inputs.o
+
+# target to build an object file
+src/inputs.cpp.o:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/inputs.cpp.o
+.PHONY : src/inputs.cpp.o
+
+src/inputs.i: src/inputs.cpp.i
+
+.PHONY : src/inputs.i
+
+# target to preprocess a source file
+src/inputs.cpp.i:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/inputs.cpp.i
+.PHONY : src/inputs.cpp.i
+
+src/inputs.s: src/inputs.cpp.s
+
+.PHONY : src/inputs.s
+
+# target to generate assembly for a file
+src/inputs.cpp.s:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/inputs.cpp.s
+.PHONY : src/inputs.cpp.s
+
 src/rock.o: src/rock.cpp.o
 
 .PHONY : src/rock.o
@@ -475,6 +502,33 @@ src/tiny_obj_loader.s: src/tiny_obj_loader.cpp.s
 src/tiny_obj_loader.cpp.s:
 	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/tiny_obj_loader.cpp.s
 .PHONY : src/tiny_obj_loader.cpp.s
+
+src/trackBallCamera.o: src/trackBallCamera.cpp.o
+
+.PHONY : src/trackBallCamera.o
+
+# target to build an object file
+src/trackBallCamera.cpp.o:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/trackBallCamera.cpp.o
+.PHONY : src/trackBallCamera.cpp.o
+
+src/trackBallCamera.i: src/trackBallCamera.cpp.i
+
+.PHONY : src/trackBallCamera.i
+
+# target to preprocess a source file
+src/trackBallCamera.cpp.i:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/trackBallCamera.cpp.i
+.PHONY : src/trackBallCamera.cpp.i
+
+src/trackBallCamera.s: src/trackBallCamera.cpp.s
+
+.PHONY : src/trackBallCamera.s
+
+# target to generate assembly for a file
+src/trackBallCamera.cpp.s:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/trackBallCamera.cpp.s
+.PHONY : src/trackBallCamera.cpp.s
 
 src/walls.o: src/walls.cpp.o
 
@@ -545,12 +599,18 @@ help:
 	@echo "... src/fish.o"
 	@echo "... src/fish.i"
 	@echo "... src/fish.s"
+	@echo "... src/inputs.o"
+	@echo "... src/inputs.i"
+	@echo "... src/inputs.s"
 	@echo "... src/rock.o"
 	@echo "... src/rock.i"
 	@echo "... src/rock.s"
 	@echo "... src/tiny_obj_loader.o"
 	@echo "... src/tiny_obj_loader.i"
 	@echo "... src/tiny_obj_loader.s"
+	@echo "... src/trackBallCamera.o"
+	@echo "... src/trackBallCamera.i"
+	@echo "... src/trackBallCamera.s"
 	@echo "... src/walls.o"
 	@echo "... src/walls.i"
 	@echo "... src/walls.s"
