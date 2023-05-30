@@ -341,6 +341,33 @@ src/fish.cpp.s:
 	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/fish.cpp.s
 .PHONY : src/fish.cpp.s
 
+src/rock.o: src/rock.cpp.o
+
+.PHONY : src/rock.o
+
+# target to build an object file
+src/rock.cpp.o:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/rock.cpp.o
+.PHONY : src/rock.cpp.o
+
+src/rock.i: src/rock.cpp.i
+
+.PHONY : src/rock.i
+
+# target to preprocess a source file
+src/rock.cpp.i:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/rock.cpp.i
+.PHONY : src/rock.cpp.i
+
+src/rock.s: src/rock.cpp.s
+
+.PHONY : src/rock.s
+
+# target to generate assembly for a file
+src/rock.cpp.s:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/rock.cpp.s
+.PHONY : src/rock.cpp.s
+
 src/tiny_obj_loader.o: src/tiny_obj_loader.cpp.o
 
 .PHONY : src/tiny_obj_loader.o
@@ -401,6 +428,9 @@ help:
 	@echo "... src/fish.o"
 	@echo "... src/fish.i"
 	@echo "... src/fish.s"
+	@echo "... src/rock.o"
+	@echo "... src/rock.i"
+	@echo "... src/rock.s"
 	@echo "... src/tiny_obj_loader.o"
 	@echo "... src/tiny_obj_loader.i"
 	@echo "... src/tiny_obj_loader.s"

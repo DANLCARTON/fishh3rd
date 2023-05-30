@@ -16,6 +16,7 @@
 #include <SDL/SDL.h>
 #include <glimac/trackBallCamera.hpp>
 #include <glimac/fish.hpp>
+#include <glimac/rock.hpp>
 
 //                                                         BEST VALUES
 const unsigned int FISH_NUMBER = 200; //                    peu, entre 10 et 15 ça me semble pas mal ?
@@ -33,62 +34,10 @@ const double SPEED = 0.15; //                                 .15
 
 using namespace glimac;
 
-class Rock {
-    public:
-        glm::vec3 m_position;
-        glm::vec3 m_angle;
-        glm::vec3 m_size;
-        Geometry m_shape;
-
-        Rock();
-        Rock(glm::vec3 position, glm::vec3 angle, glm::vec3 size, Geometry shape) : m_position(position), m_angle(angle), m_size(size), m_shape(shape) {}
-        ~Rock() = default;
-
-        void draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape, GLuint texture);
-};
-
 // - - - - - - P E T I T E S   F O N C T I O N S - - - - - -
 
 int sign(float value) {
     return value >= 0 ? 1 : -1;
-}
-
-std::vector<Fish> createHerd(const unsigned int fishNumber) {
-    std::vector<Fish> fishherd;
-    for (unsigned int i = 0; i < fishNumber; ++i) {
-        double size = .4;
-        // glm::vec3 position = glm::vec3(glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size));
-        glm::vec3 position = glm::vec3(glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA));
-        // std::cout << position << std::endl;
-        // glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
-        glm::vec3 angle = glm::vec3(0, 0, -1);
-        double speed = SPEED;
-        Sphere shape = Sphere(1.f, 32, 16);
-        fishherd.push_back(Fish(position, angle, speed, size, shape, i));
-    }
-    return fishherd;
-}
-
-std::vector<Rock> createRocks(std::vector<Geometry> &rockShapes) {
-    std::vector<Rock> rockHerd;
-    rockHerd.push_back(Rock(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.0f, 1.f, 1.f), rockShapes[0]));
-    return rockHerd;
-}
-
-void Rock::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocation, GLint uNormalMatrixLocation, Geometry shape, GLuint texture) {
-
-    MVMatrix = glm::scale(MVMatrix, this->m_size);
-    MVMatrix = glm::translate(MVMatrix, this->m_position);
-    MVMatrix = glm::rotate(MVMatrix, 1.f, this->m_angle);
-
-    glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
-    glUniformMatrix4fv(uMVProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
-    glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));    
-    
-    glBindTexture(GL_TEXTURE_2D, texture);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, shape.getVertexCount());
-    glBindTexture(GL_TEXTURE_2D, 0);
-
 }
 
 double distance(Fish &fish, Fish &otherFish) {
@@ -648,7 +597,7 @@ int main(int argc, char** argv) {
     /*********************************/
 
     // création des fishes
-    std::vector<Fish> fishherd = createHerd(FISH_NUMBER);
+    std::vector<Fish> fishherd = createHerd(FISH_NUMBER, AREA, SPEED);
     Fish playerFish = Fish(glm::vec3(0), glm::vec3(0, 0, -1), .15, .4, Sphere(1, 32, 16), 10000);
 
     // création des décors

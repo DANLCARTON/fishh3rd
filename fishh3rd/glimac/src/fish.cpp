@@ -79,4 +79,20 @@ void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix
 
 }
 
+std::vector<Fish> createHerd(const unsigned int fishNumber, double AREA, double SPEED) {
+    std::vector<Fish> fishherd;
+    for (unsigned int i = 0; i < fishNumber; ++i) {
+        double size = .4;
+        // glm::vec3 position = glm::vec3(glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size));
+        glm::vec3 position = glm::vec3(glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA));
+        // std::cout << position << std::endl;
+        // glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
+        glm::vec3 angle = glm::vec3(0, 0, -1);
+        double speed = SPEED;
+        Sphere shape = Sphere(1.f, 32, 16);
+        fishherd.push_back(Fish(position, angle, speed, size, shape, i));
+    }
+    return fishherd;
+}
+
 }

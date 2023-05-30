@@ -42,5 +42,7 @@ namespace glimac {
     };
 
     double getAngle(double a, double b);
+
+    std::vector<Fish> createHerd(const unsigned int fishNumber, double AREA, double SPEED);
     
 }

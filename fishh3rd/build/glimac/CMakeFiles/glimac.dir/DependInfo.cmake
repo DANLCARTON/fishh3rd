@@ -12,6 +12,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/eric/F33/fishh3rd/glimac/src/Shader.cpp" "/home/eric/F33/fishh3rd/build/glimac/CMakeFiles/glimac.dir/src/Shader.cpp.o"
   "/home/eric/F33/fishh3rd/glimac/src/Sphere.cpp" "/home/eric/F33/fishh3rd/build/glimac/CMakeFiles/glimac.dir/src/Sphere.cpp.o"
   "/home/eric/F33/fishh3rd/glimac/src/fish.cpp" "/home/eric/F33/fishh3rd/build/glimac/CMakeFiles/glimac.dir/src/fish.cpp.o"
+  "/home/eric/F33/fishh3rd/glimac/src/rock.cpp" "/home/eric/F33/fishh3rd/build/glimac/CMakeFiles/glimac.dir/src/rock.cpp.o"
   "/home/eric/F33/fishh3rd/glimac/src/tiny_obj_loader.cpp" "/home/eric/F33/fishh3rd/build/glimac/CMakeFiles/glimac.dir/src/tiny_obj_loader.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

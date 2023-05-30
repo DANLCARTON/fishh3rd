@@ -12,6 +12,7 @@ src/CMakeFiles/src_main.dir/main.cpp.o: ../glimac/include/glimac/Sphere.hpp
 src/CMakeFiles/src_main.dir/main.cpp.o: ../glimac/include/glimac/common.hpp
 src/CMakeFiles/src_main.dir/main.cpp.o: ../glimac/include/glimac/fish.hpp
 src/CMakeFiles/src_main.dir/main.cpp.o: ../glimac/include/glimac/glm.hpp
+src/CMakeFiles/src_main.dir/main.cpp.o: ../glimac/include/glimac/rock.hpp
 src/CMakeFiles/src_main.dir/main.cpp.o: ../glimac/include/glimac/trackBallCamera.hpp
 src/CMakeFiles/src_main.dir/main.cpp.o: ../third-party/include/GL/glew.h
 src/CMakeFiles/src_main.dir/main.cpp.o: ../third-party/include/glm/detail/_fixes.hpp

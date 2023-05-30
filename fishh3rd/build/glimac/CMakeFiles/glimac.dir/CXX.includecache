@@ -86,6 +86,18 @@ glm/gtx/io.hpp
 glm/gtc/random.hpp
 -
 
+../glimac/include/glimac/rock.hpp
+vector
+-
+glimac/Sphere.hpp
+-
+glimac/SDLWindowManager.hpp
+-
+glimac/Geometry.hpp
+-
+common.hpp
+../glimac/include/glimac/common.hpp
+
 ../third-party/include/GL/glew.h
 stddef.h
 -
@@ -837,4 +849,8 @@ detail/func_vector_relational.hpp
 /home/eric/F33/fishh3rd/glimac/src/fish.cpp
 glimac/fish.hpp
 /home/eric/F33/fishh3rd/glimac/src/glimac/fish.hpp
+
+/home/eric/F33/fishh3rd/glimac/src/rock.cpp
+glimac/rock.hpp
+/home/eric/F33/fishh3rd/glimac/src/glimac/rock.hpp
 

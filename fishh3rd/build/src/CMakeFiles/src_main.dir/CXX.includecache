@@ -102,6 +102,18 @@ glm/gtx/io.hpp
 glm/gtc/random.hpp
 -
 
+../glimac/include/glimac/rock.hpp
+vector
+-
+glimac/Sphere.hpp
+-
+glimac/SDLWindowManager.hpp
+-
+glimac/Geometry.hpp
+-
+common.hpp
+../glimac/include/glimac/common.hpp
+
 ../glimac/include/glimac/trackBallCamera.hpp
 
 ../third-party/include/GL/glew.h
@@ -882,5 +894,7 @@ SDL/SDL.h
 glimac/trackBallCamera.hpp
 -
 glimac/fish.hpp
+-
+glimac/rock.hpp
 -
 

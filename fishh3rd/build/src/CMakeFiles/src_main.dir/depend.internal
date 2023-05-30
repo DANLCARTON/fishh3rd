@@ -13,6 +13,7 @@ src/CMakeFiles/src_main.dir/main.cpp.o
  ../glimac/include/glimac/common.hpp
  ../glimac/include/glimac/fish.hpp
  ../glimac/include/glimac/glm.hpp
+ ../glimac/include/glimac/rock.hpp
  ../glimac/include/glimac/trackBallCamera.hpp
  ../third-party/include/GL/glew.h
  ../third-party/include/glm/detail/_fixes.hpp
