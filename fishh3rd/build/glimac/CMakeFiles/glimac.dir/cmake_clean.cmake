@@ -10,6 +10,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/glimac.dir/src/fish.cpp.o"
   "CMakeFiles/glimac.dir/src/rock.cpp.o"
   "CMakeFiles/glimac.dir/src/tiny_obj_loader.cpp.o"
+  "CMakeFiles/glimac.dir/src/walls.cpp.o"
   "libglimac.a"
   "libglimac.pdb"
 )

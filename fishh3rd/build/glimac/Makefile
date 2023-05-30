@@ -422,6 +422,33 @@ src/tiny_obj_loader.cpp.s:
 	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/tiny_obj_loader.cpp.s
 .PHONY : src/tiny_obj_loader.cpp.s
 
+src/walls.o: src/walls.cpp.o
+
+.PHONY : src/walls.o
+
+# target to build an object file
+src/walls.cpp.o:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/walls.cpp.o
+.PHONY : src/walls.cpp.o
+
+src/walls.i: src/walls.cpp.i
+
+.PHONY : src/walls.i
+
+# target to preprocess a source file
+src/walls.cpp.i:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/walls.cpp.i
+.PHONY : src/walls.cpp.i
+
+src/walls.s: src/walls.cpp.s
+
+.PHONY : src/walls.s
+
+# target to generate assembly for a file
+src/walls.cpp.s:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/walls.cpp.s
+.PHONY : src/walls.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -464,6 +491,9 @@ help:
 	@echo "... src/tiny_obj_loader.o"
 	@echo "... src/tiny_obj_loader.i"
 	@echo "... src/tiny_obj_loader.s"
+	@echo "... src/walls.o"
+	@echo "... src/walls.i"
+	@echo "... src/walls.s"
 .PHONY : help
 
 

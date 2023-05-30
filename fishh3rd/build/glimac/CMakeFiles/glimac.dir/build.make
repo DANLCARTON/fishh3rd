@@ -200,6 +200,19 @@ glimac/CMakeFiles/glimac.dir/src/tiny_obj_loader.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/glimac.dir/src/tiny_obj_loader.cpp.s"
 	cd /home/eric/F33/fishh3rd/build/glimac && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/eric/F33/fishh3rd/glimac/src/tiny_obj_loader.cpp -o CMakeFiles/glimac.dir/src/tiny_obj_loader.cpp.s
 
+glimac/CMakeFiles/glimac.dir/src/walls.cpp.o: glimac/CMakeFiles/glimac.dir/flags.make
+glimac/CMakeFiles/glimac.dir/src/walls.cpp.o: ../glimac/src/walls.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/eric/F33/fishh3rd/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object glimac/CMakeFiles/glimac.dir/src/walls.cpp.o"
+	cd /home/eric/F33/fishh3rd/build/glimac && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/glimac.dir/src/walls.cpp.o -c /home/eric/F33/fishh3rd/glimac/src/walls.cpp
+
+glimac/CMakeFiles/glimac.dir/src/walls.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/glimac.dir/src/walls.cpp.i"
+	cd /home/eric/F33/fishh3rd/build/glimac && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/eric/F33/fishh3rd/glimac/src/walls.cpp > CMakeFiles/glimac.dir/src/walls.cpp.i
+
+glimac/CMakeFiles/glimac.dir/src/walls.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/glimac.dir/src/walls.cpp.s"
+	cd /home/eric/F33/fishh3rd/build/glimac && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/eric/F33/fishh3rd/glimac/src/walls.cpp -o CMakeFiles/glimac.dir/src/walls.cpp.s
+
 # Object files for target glimac
 glimac_OBJECTS = \
 "CMakeFiles/glimac.dir/src/Cone.cpp.o" \
@@ -212,7 +225,8 @@ glimac_OBJECTS = \
 "CMakeFiles/glimac.dir/src/boids.cpp.o" \
 "CMakeFiles/glimac.dir/src/fish.cpp.o" \
 "CMakeFiles/glimac.dir/src/rock.cpp.o" \
-"CMakeFiles/glimac.dir/src/tiny_obj_loader.cpp.o"
+"CMakeFiles/glimac.dir/src/tiny_obj_loader.cpp.o" \
+"CMakeFiles/glimac.dir/src/walls.cpp.o"
 
 # External object files for target glimac
 glimac_EXTERNAL_OBJECTS =
@@ -228,9 +242,10 @@ glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/boids.cpp.o
 glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/fish.cpp.o
 glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/rock.cpp.o
 glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/tiny_obj_loader.cpp.o
+glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/walls.cpp.o
 glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/build.make
 glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/eric/F33/fishh3rd/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking CXX static library libglimac.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/eric/F33/fishh3rd/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX static library libglimac.a"
 	cd /home/eric/F33/fishh3rd/build/glimac && $(CMAKE_COMMAND) -P CMakeFiles/glimac.dir/cmake_clean_target.cmake
 	cd /home/eric/F33/fishh3rd/build/glimac && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/glimac.dir/link.txt --verbose=$(VERBOSE)
 

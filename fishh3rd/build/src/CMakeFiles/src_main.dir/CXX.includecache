@@ -126,6 +126,18 @@ common.hpp
 
 ../glimac/include/glimac/trackBallCamera.hpp
 
+../glimac/include/glimac/walls.hpp
+vector
+-
+glimac/Sphere.hpp
+-
+glimac/fish.hpp
+-
+glimac/boids.hpp
+-
+common.hpp
+../glimac/include/glimac/common.hpp
+
 ../third-party/include/GL/glew.h
 stddef.h
 -
@@ -908,5 +920,7 @@ glimac/fish.hpp
 glimac/rock.hpp
 -
 glimac/boids.hpp
+-
+glimac/walls.hpp
 -
 
