@@ -70,6 +70,14 @@ vector
 common.hpp
 ../glimac/include/glimac/common.hpp
 
+../glimac/include/glimac/VAO_VBO.hpp
+vector
+-
+glimac/Geometry.hpp
+-
+common.hpp
+../glimac/include/glimac/common.hpp
+
 ../glimac/include/glimac/assets.hpp
 vector
 -
@@ -932,5 +940,7 @@ glimac/boids.hpp
 glimac/walls.hpp
 -
 glimac/assets.hpp
+-
+glimac/VAO_VBO.hpp
 -
 

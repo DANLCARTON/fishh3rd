@@ -20,6 +20,7 @@
 #include <glimac/boids.hpp>
 #include <glimac/walls.hpp>
 #include <glimac/assets.hpp>
+#include <glimac/VAO_VBO.hpp>
 
 //                                                         BEST VALUES
 const unsigned int FISH_NUMBER = 200; //                    peu, entre 10 et 15 ça me semble pas mal ?
@@ -72,8 +73,6 @@ int main(int argc, char** argv) {
     rockShapes.push_back(Rock3Mesh);
     rockShapes.push_back(Rock4Mesh);
 
-    //std::cout << (0 == -0) << std::endl;
-
     // Initialize SDL and open a window
     float width  = 1280;
     float height = 720; 
@@ -95,11 +94,6 @@ int main(int argc, char** argv) {
         // Initialize depth test
         // Permet de gérer les différents plans de la scène 
         glEnable(GL_DEPTH_TEST);
-
-        /*
-        glEnable(GL_BLEND); //Enable blending.
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-        */
 
         // textures
         std::unique_ptr<Image> fishSkinBlueMap = loadImage("../assets/textures/Blue.jpg");
@@ -140,7 +134,7 @@ int main(int argc, char** argv) {
 
         std::unique_ptr<Image> leafMap = loadImage("../assets/textures/Leaf.jpg");
         GLuint leafSkin;
-        importTexture(LeafMap, leafSkin);
+        importTexture(leafMap, leafSkin);
 
         std::unique_ptr<Image> rockMap = loadImage("../assets/textures/Rock.jpg");
         GLuint rockSkin;
@@ -178,145 +172,35 @@ int main(int argc, char** argv) {
 
         GLint mapLocation = glGetUniformLocation(program.getGLId(), "uTexture");
 
-        /*
-        uniform vec3 uKd;
-        uniform vec3 uKs;
-        uniform float uShininess;
-
-        uniform vec3 uLightDir_vs;
-        uniform vec3 uLightIntensity;
-        */
-
         GLint uKdLocation = glGetUniformLocation(program.getGLId(), "uKd");
         GLint uKsLocation = glGetUniformLocation(program.getGLId(), "uKs");
         GLint uShininessLocation = glGetUniformLocation(program.getGLId(), "uShininess");
         GLint uLightDir_vsLocation = glGetUniformLocation(program.getGLId(), "uLightDir_vs");
         GLint uLightIntensityLocation = glGetUniformLocation(program.getGLId(), "uLightIntensity");
 
-        /* 
-        glm::perspective {
-            fovy : angle vertical de vue
-            aspect : ratio de la largeur de la fenêtre par sa hauteur
-            near et far : range de vision sur l'axe de la profondeur. la distance d'affichage ??? oui
-        }
-        */
-  
-        
-        /*
-        GLuint vbo;
-        glGenBuffers(1,&vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            Sphere sphere=Sphere(1,32,16);
-            glBufferData(GL_ARRAY_BUFFER, sphere.getVertexCount() * sizeof(ShapeVertex), sphere.getDataPointer(), GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);   
-        */
 
 
         GLuint vbo;
-        glGenBuffers(1, &vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            std::vector<float> vertex_data;
-            /*for (int i = 0; i < attrib.vertices.size(); ++i) {
-                vertex_data.push_back(attrib.vertices[i]);
-            }*/
-            glBufferData(GL_ARRAY_BUFFER, sizeof(Geometry::Vertex) * FishMesh.getVertexCount(), FishMesh.getVertexBuffer(), GL_STATIC_DRAW);
-            //glBufferData(GL_ARRAY_BUFFER, vertex_data.size()*sizeof(float), vertex_data.data(), GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        GLuint vbo2;
-        glGenBuffers(2, &vbo2);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo2);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(Geometry::Vertex)*BGCube.getVertexCount(), BGCube.getVertexBuffer(), GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-        GLuint ebo;
-        glGenBuffers(1, &ebo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * FishMesh.getIndexCount(), FishMesh.getIndexBuffer(), GL_STATIC_DRAW);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
+        createVBO(vbo, FishMesh);
 
         GLuint vao;
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
+        createVAO(vao, vbo);
 
-            const GLuint VERTEX_ATTR_POSITION=0;
-            glEnableVertexAttribArray(VERTEX_ATTR_POSITION);
 
-            const GLuint VERTEX_ATTR_NORMAL=1;
-            glEnableVertexAttribArray(VERTEX_ATTR_NORMAL);
 
-            const GLuint VERTEX_ATTR_TEXTURE=2;
-            glEnableVertexAttribArray(VERTEX_ATTR_TEXTURE);
-
-            glBindBuffer(GL_ARRAY_BUFFER,vbo);
-                glVertexAttribPointer(VERTEX_ATTR_POSITION, 
-                    3, GL_FLOAT, GL_FALSE, 
-                    sizeof(Geometry::Vertex),0);
-                glVertexAttribPointer(VERTEX_ATTR_NORMAL,
-                    3, GL_FLOAT, GL_FALSE, 
-                    sizeof(Geometry::Vertex),(void*) (sizeof(glm::vec3)));
-                glVertexAttribPointer(VERTEX_ATTR_TEXTURE,
-                    2, GL_FLOAT, GL_FALSE, 
-                    sizeof(Geometry::Vertex),(void*) (2*sizeof(glm::vec3)));
-            glBindBuffer(GL_ARRAY_BUFFER,0);
-
-        glBindVertexArray(0);
-
+        GLuint vbo2;
+        createVBO(vbo2, BGCube);
+        
         GLuint vao2;
-        glGenVertexArrays(1, &vao2);
-        glBindVertexArray(vao2);
+        createVAO(vao2, vbo2);
 
-            const GLuint VERTEX_ATTR_POSITION2=0;
-            glEnableVertexAttribArray(VERTEX_ATTR_POSITION2);
 
-            const GLuint VERTEX_ATTR_NORMAL2=1;
-            glEnableVertexAttribArray(VERTEX_ATTR_NORMAL2);
 
-            const GLuint VERTEX_ATTR_TEXTURE2=2;
-            glEnableVertexAttribArray(VERTEX_ATTR_TEXTURE2);
-
-            glBindBuffer(GL_ARRAY_BUFFER,vbo2);
-                glVertexAttribPointer(VERTEX_ATTR_POSITION2, 
-                    3, GL_FLOAT, GL_FALSE, 
-                    sizeof(Geometry::Vertex),0);
-                glVertexAttribPointer(VERTEX_ATTR_NORMAL2,
-                    3, GL_FLOAT, GL_FALSE, 
-                    sizeof(Geometry::Vertex),(void*) (sizeof(glm::vec3)));
-                glVertexAttribPointer(VERTEX_ATTR_TEXTURE2,
-                    2, GL_FLOAT, GL_FALSE, 
-                    sizeof(Geometry::Vertex),(void*) (2*sizeof(glm::vec3)));
-            glBindBuffer(GL_ARRAY_BUFFER,0);
-
-        glBindVertexArray(0);
+        GLuint vbo3;
+        createVBO(vbo3, Rock1Mesh);
 
         GLuint vao3;
-        glGenVertexArrays(1, &vao3);
-        glBindVertexArray(vao3);
-
-            const GLuint VERTEX_ATTR_POSITION3=0;
-            glEnableVertexAttribArray(VERTEX_ATTR_POSITION3);
-
-            const GLuint VERTEX_ATTR_NORMAL3=1;
-            glEnableVertexAttribArray(VERTEX_ATTR_NORMAL3);
-
-            const GLuint VERTEX_ATTR_TEXTURE3=2;
-            glEnableVertexAttribArray(VERTEX_ATTR_TEXTURE3);
-
-            glBindBuffer(GL_ARRAY_BUFFER,vao3);
-                glVertexAttribPointer(VERTEX_ATTR_POSITION3, 
-                    3, GL_FLOAT, GL_FALSE, 
-                    sizeof(Geometry::Vertex),0);
-                glVertexAttribPointer(VERTEX_ATTR_NORMAL3,
-                    3, GL_FLOAT, GL_FALSE, 
-                    sizeof(Geometry::Vertex),(void*) (sizeof(glm::vec3)));
-                glVertexAttribPointer(VERTEX_ATTR_TEXTURE3,
-                    2, GL_FLOAT, GL_FALSE, 
-                    sizeof(Geometry::Vertex),(void*) (2*sizeof(glm::vec3)));
-            glBindBuffer(GL_ARRAY_BUFFER,0);
-
-        glBindVertexArray(0);
+        createVAO(vao3, vbo3);
 
         
     /*********************************/
@@ -380,39 +264,6 @@ int main(int argc, char** argv) {
                     // On voit du coté négatif des Z par défaut en OpenGL
                 glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
-
-                /*
-                MVMatrix = glm::rotate(MVMatrix, windowManager.getTime(), glm::vec3(0, 1, 0));
-
-                // envoi des matrices au GPU.
-                glUniformMatrix4fv(uMVMatrixLocation,1,GL_FALSE,glm::value_ptr(MVMatrix));
-                glUniformMatrix4fv(uMVPMatrixLocation,1,GL_FALSE,glm::value_ptr(ProjMatrix*MVMatrix));
-                glUniformMatrix4fv(uNormalMatrixLocation,1,GL_FALSE,glm::value_ptr(NormalMatrix));
-
-                glBindTexture(GL_TEXTURE_2D, earth);
-                    glUniform1i(mapLocation, 0);
-                    glDrawArrays(GL_TRIANGLES, 0, sphere.getVertexCount());
-                glBindTexture(GL_TEXTURE_2D, 0);
-
-                for (size_t i = 0; i < 32; ++i) {
-                    glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));
-
-                    MVMatrix = glm::rotate(MVMatrix, windowManager.getTime(), axes[i]);
-                    MVMatrix = glm::translate(MVMatrix, startPosition[i]);
-                    MVMatrix = glm::scale(MVMatrix, glm::vec3(.1, .1, .1));
-                    MVMatrix = glm::rotate(MVMatrix, -windowManager.getTime(), axes[i]);
-
-                    glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
-                    glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
-                    glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));                    
-
-                    glBindTexture(GL_TEXTURE_2D, moon);
-                        glUniform1i(mapLocation, 0);
-                        glDrawArrays(GL_TRIANGLES, 0, sphere.getVertexCount());
-                    glBindTexture(GL_TEXTURE_2D, 0);
-                }
-                */
-
                 glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
                 glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
                 glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
@@ -472,17 +323,6 @@ int main(int argc, char** argv) {
                 glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
                 glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
 
-                /*
-                GLint uKdLocation = glGetUniformLocation(program.getGLId(), "uKd");
-                GLint uKsLocation = glGetUniformLocation(program.getGLId(), "uKs");
-                GLint uShininessLocation = glGetUniformLocation(program.getGLId(), "uShininess");
-                GLint uLightDir_vsLocation = glGetUniformLocation(program.getGLId(), "uLightDir_vs");
-                GLint uLightIntensityLocation = glGetUniformLocation(program.getGLId(), "uLightIntensity")
-                */
-
-
-
-
                 glBindTexture(GL_TEXTURE_2D, water);
                     glDrawArrays(GL_LINES, 0, BGCube.getVertexCount());
                     MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
@@ -515,10 +355,6 @@ int main(int argc, char** argv) {
                 }
             glBindVertexArray(0);
 
-
-
-
-                    glDrawArrays(GL_TRIANGLE_FAN, 0, Rock1Mesh.getVertexCount());   
                 // faudra ranger ça un peu mieux
                 // on fera peut-être ça un jour
                 while (windowManager.pollEvent(e)) {
@@ -543,7 +379,7 @@ int main(int argc, char** argv) {
                             case SDLK_z:
                                 camUp = true;
                                 break;
-                            case SDLK_s:
+                            case SDLK_s:    
                                 camDown = true;
                                 break;
                             case SDLK_q:

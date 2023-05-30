@@ -9,6 +9,7 @@ src/CMakeFiles/src_main.dir/main.cpp.o: ../glimac/include/glimac/Program.hpp
 src/CMakeFiles/src_main.dir/main.cpp.o: ../glimac/include/glimac/SDLWindowManager.hpp
 src/CMakeFiles/src_main.dir/main.cpp.o: ../glimac/include/glimac/Shader.hpp
 src/CMakeFiles/src_main.dir/main.cpp.o: ../glimac/include/glimac/Sphere.hpp
+src/CMakeFiles/src_main.dir/main.cpp.o: ../glimac/include/glimac/VAO_VBO.hpp
 src/CMakeFiles/src_main.dir/main.cpp.o: ../glimac/include/glimac/assets.hpp
 src/CMakeFiles/src_main.dir/main.cpp.o: ../glimac/include/glimac/boids.hpp
 src/CMakeFiles/src_main.dir/main.cpp.o: ../glimac/include/glimac/common.hpp

@@ -314,6 +314,33 @@ src/Sphere.cpp.s:
 	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/Sphere.cpp.s
 .PHONY : src/Sphere.cpp.s
 
+src/VAO_VBO.o: src/VAO_VBO.cpp.o
+
+.PHONY : src/VAO_VBO.o
+
+# target to build an object file
+src/VAO_VBO.cpp.o:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/VAO_VBO.cpp.o
+.PHONY : src/VAO_VBO.cpp.o
+
+src/VAO_VBO.i: src/VAO_VBO.cpp.i
+
+.PHONY : src/VAO_VBO.i
+
+# target to preprocess a source file
+src/VAO_VBO.cpp.i:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/VAO_VBO.cpp.i
+.PHONY : src/VAO_VBO.cpp.i
+
+src/VAO_VBO.s: src/VAO_VBO.cpp.s
+
+.PHONY : src/VAO_VBO.s
+
+# target to generate assembly for a file
+src/VAO_VBO.cpp.s:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/VAO_VBO.cpp.s
+.PHONY : src/VAO_VBO.cpp.s
+
 src/assets.o: src/assets.cpp.o
 
 .PHONY : src/assets.o
@@ -506,6 +533,9 @@ help:
 	@echo "... src/Sphere.o"
 	@echo "... src/Sphere.i"
 	@echo "... src/Sphere.s"
+	@echo "... src/VAO_VBO.o"
+	@echo "... src/VAO_VBO.i"
+	@echo "... src/VAO_VBO.s"
 	@echo "... src/assets.o"
 	@echo "... src/assets.i"
 	@echo "... src/assets.s"
