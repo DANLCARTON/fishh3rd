@@ -17,6 +17,7 @@
 #include <glimac/trackBallCamera.hpp>
 #include <glimac/fish.hpp>
 #include <glimac/rock.hpp>
+#include <glimac/boids.hpp>
 
 //                                                         BEST VALUES
 const unsigned int FISH_NUMBER = 200; //                    peu, entre 10 et 15 ça me semble pas mal ?
@@ -33,81 +34,6 @@ const double WALLS_STRENGTH = 1; //                        1
 const double SPEED = 0.15; //                                 .15
 
 using namespace glimac;
-
-// - - - - - - P E T I T E S   F O N C T I O N S - - - - - -
-
-int sign(float value) {
-    return value >= 0 ? 1 : -1;
-}
-
-double distance(Fish &fish, Fish &otherFish) {
-    double distanceX = otherFish.position()[0] - fish.position()[0];
-    double distanceY = otherFish.position()[1] - fish.position()[1];
-    double distanceZ = otherFish.position()[2] - fish.position()[2];
-    double distance = std::sqrt(distanceX*distanceX + distanceY*distanceY + distanceZ*distanceZ);
-    return distance;
-}
-
-// - - - - - - G R O S S E S   F O N C T I O N S - - - - - -
-
-void separation(Fish &fish, Fish &otherFish) {
-    float dist = distance(fish, otherFish);
-    glm::vec3 distanceVec = otherFish.position()-fish.position();
-    glm::vec3 diffAngle = fish.angle()-otherFish.angle();
-
-    int directionXY = sign(diffAngle[2]);
-    int directionXZ = sign(diffAngle[1]);
-
-    if (distanceVec[0] < SEPARATION_RADIUS || distanceVec[1] < SEPARATION_RADIUS) {
-        otherFish.turn(1, directionXY, 1/(dist*SEPARATION_STRENGTH), TURN_FACTOR);
-    }
-    if (distanceVec[1] < SEPARATION_RADIUS || distanceVec[2] < SEPARATION_RADIUS) {
-        otherFish.turn(2, directionXZ, 1/(dist*SEPARATION_STRENGTH), TURN_FACTOR);
-    }
-}
-
-void alignment(Fish &fish, Fish &otherFish) {
-    float dist = distance(fish, otherFish);
-    glm::vec3 distanceVec = otherFish.position()-fish.position();
-    glm::vec3 diffAngle = fish.angle()-otherFish.angle();
-
-    int directionXY = sign(diffAngle[2]);
-    int directionXZ = sign(diffAngle[1]);
-
-    if (
-        (SEPARATION_RADIUS < distanceVec[0] && distanceVec[0] < ALIGNMENT_RADIUS) ||
-        (SEPARATION_RADIUS < distanceVec[1] && distanceVec[1] < ALIGNMENT_RADIUS)
-    ) {
-        otherFish.turn(1, -directionXY, 1/(dist*ALIGNMENT_STRENGTH), TURN_FACTOR);
-    }
-
-    if (
-        (SEPARATION_RADIUS < distanceVec[1] && distanceVec[1] < ALIGNMENT_RADIUS) ||
-        (SEPARATION_RADIUS < distanceVec[2] && distanceVec[2] < ALIGNMENT_RADIUS)
-    ) {
-        otherFish.turn(2, -directionXZ, 1/(dist*ALIGNMENT_STRENGTH), TURN_FACTOR);
-    }
-}
-
-void cohesion(Fish &fish, std::vector<Fish> &fishherd) {
-    double averageXYDirection = 0;
-    double averageXZDirection = 0;
-    double fishesInTheRadius = 0;
-
-    for (Fish &otherFish : fishherd) {
-        if (distance(fish, otherFish) < COHESION_RADIUS) {
-            averageXYDirection += getAngle(otherFish.angle()[0], otherFish.angle()[1]);
-            averageXZDirection += getAngle(otherFish.angle()[0], otherFish.angle()[2]);
-            ++fishesInTheRadius;
-        }
-    }
-
-    averageXYDirection = averageXYDirection/fishesInTheRadius;
-    averageXZDirection = averageXZDirection/fishesInTheRadius;
-
-    fish.turn(1, averageXYDirection, COHESION_STRENGTH, TURN_FACTOR);
-    fish.turn(2, averageXZDirection, COHESION_STRENGTH, TURN_FACTOR);
-}
 
 // - - - - - - G E S T I O N   D E S   M U R S - - - - - -
 
@@ -709,13 +635,13 @@ int main(int argc, char** argv) {
 
                     for (Fish &otherFish : fishherd) {
                         if (fish.id != otherFish.id) {
-                            separation(fish, otherFish);
-                            alignment(fish, otherFish);
+                            separation(fish, otherFish, SEPARATION_RADIUS, SEPARATION_STRENGTH, TURN_FACTOR);
+                            alignment(fish, otherFish, SEPARATION_RADIUS, ALIGNMENT_RADIUS, ALIGNMENT_STRENGTH, TURN_FACTOR);
                         }
                     }
-                    cohesion(fish, fishherd);
-                    separation(playerFish, fish);
-                    alignment(playerFish, fish);
+                    cohesion(fish, fishherd, COHESION_RADIUS, COHESION_STRENGTH, TURN_FACTOR);
+                    separation(playerFish, fish, SEPARATION_RADIUS, SEPARATION_STRENGTH, TURN_FACTOR);
+                    alignment(playerFish, fish, SEPARATION_RADIUS, ALIGNMENT_RADIUS, ALIGNMENT_STRENGTH, TURN_FACTOR);
                     //wallSeparation(fish);
                     GLuint texture;
                     if (fish.id % 6 == 0) texture = blueSkin;

@@ -70,6 +70,16 @@ vector
 common.hpp
 ../glimac/include/glimac/common.hpp
 
+../glimac/include/glimac/boids.hpp
+vector
+-
+glimac/Sphere.hpp
+-
+glimac/fish.hpp
+-
+common.hpp
+../glimac/include/glimac/common.hpp
+
 ../glimac/include/glimac/common.hpp
 GL/glew.h
 -
@@ -896,5 +906,7 @@ glimac/trackBallCamera.hpp
 glimac/fish.hpp
 -
 glimac/rock.hpp
+-
+glimac/boids.hpp
 -
 

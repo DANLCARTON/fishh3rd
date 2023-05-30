@@ -10,6 +10,7 @@ src/CMakeFiles/src_main.dir/main.cpp.o
  ../glimac/include/glimac/SDLWindowManager.hpp
  ../glimac/include/glimac/Shader.hpp
  ../glimac/include/glimac/Sphere.hpp
+ ../glimac/include/glimac/boids.hpp
  ../glimac/include/glimac/common.hpp
  ../glimac/include/glimac/fish.hpp
  ../glimac/include/glimac/glm.hpp

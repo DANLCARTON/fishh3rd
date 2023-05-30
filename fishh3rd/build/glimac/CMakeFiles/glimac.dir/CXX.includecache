@@ -54,6 +54,16 @@ vector
 common.hpp
 ../glimac/include/glimac/common.hpp
 
+../glimac/include/glimac/boids.hpp
+vector
+-
+glimac/Sphere.hpp
+-
+glimac/fish.hpp
+-
+common.hpp
+../glimac/include/glimac/common.hpp
+
 ../glimac/include/glimac/common.hpp
 GL/glew.h
 -
@@ -85,18 +95,6 @@ glm/gtx/io.hpp
 -
 glm/gtc/random.hpp
 -
-
-../glimac/include/glimac/rock.hpp
-vector
--
-glimac/Sphere.hpp
--
-glimac/SDLWindowManager.hpp
--
-glimac/Geometry.hpp
--
-common.hpp
-../glimac/include/glimac/common.hpp
 
 ../third-party/include/GL/glew.h
 stddef.h
@@ -846,11 +844,9 @@ detail/type_vec4.hpp
 detail/func_vector_relational.hpp
 ../third-party/include/glm/detail/func_vector_relational.hpp
 
-/home/eric/F33/fishh3rd/glimac/src/fish.cpp
+/home/eric/F33/fishh3rd/glimac/src/boids.cpp
+glimac/boids.hpp
+/home/eric/F33/fishh3rd/glimac/src/glimac/boids.hpp
 glimac/fish.hpp
 /home/eric/F33/fishh3rd/glimac/src/glimac/fish.hpp
-
-/home/eric/F33/fishh3rd/glimac/src/rock.cpp
-glimac/rock.hpp
-/home/eric/F33/fishh3rd/glimac/src/glimac/rock.hpp
 
