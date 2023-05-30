@@ -314,6 +314,33 @@ src/Sphere.cpp.s:
 	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/Sphere.cpp.s
 .PHONY : src/Sphere.cpp.s
 
+src/assets.o: src/assets.cpp.o
+
+.PHONY : src/assets.o
+
+# target to build an object file
+src/assets.cpp.o:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/assets.cpp.o
+.PHONY : src/assets.cpp.o
+
+src/assets.i: src/assets.cpp.i
+
+.PHONY : src/assets.i
+
+# target to preprocess a source file
+src/assets.cpp.i:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/assets.cpp.i
+.PHONY : src/assets.cpp.i
+
+src/assets.s: src/assets.cpp.s
+
+.PHONY : src/assets.s
+
+# target to generate assembly for a file
+src/assets.cpp.s:
+	cd /home/eric/F33/fishh3rd/build && $(MAKE) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/assets.cpp.s
+.PHONY : src/assets.cpp.s
+
 src/boids.o: src/boids.cpp.o
 
 .PHONY : src/boids.o
@@ -479,6 +506,9 @@ help:
 	@echo "... src/Sphere.o"
 	@echo "... src/Sphere.i"
 	@echo "... src/Sphere.s"
+	@echo "... src/assets.o"
+	@echo "... src/assets.i"
+	@echo "... src/assets.s"
 	@echo "... src/boids.o"
 	@echo "... src/boids.i"
 	@echo "... src/boids.s"

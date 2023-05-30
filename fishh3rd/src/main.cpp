@@ -19,6 +19,7 @@
 #include <glimac/rock.hpp>
 #include <glimac/boids.hpp>
 #include <glimac/walls.hpp>
+#include <glimac/assets.hpp>
 
 //                                                         BEST VALUES
 const unsigned int FISH_NUMBER = 200; //                    peu, entre 10 et 15 ça me semble pas mal ?
@@ -103,138 +104,63 @@ int main(int argc, char** argv) {
         // textures
         std::unique_ptr<Image> fishSkinBlueMap = loadImage("../assets/textures/Blue.jpg");
         GLuint blueSkin;
-        glGenTextures(1, &blueSkin);
-        glBindTexture(GL_TEXTURE_2D, blueSkin);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinBlueMap->getWidth(), fishSkinBlueMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinBlueMap->getPixels());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        importTexture(fishSkinBlueMap, blueSkin);
 
         std::unique_ptr<Image> fishSkinGreenMap = loadImage("../assets/textures/Green.jpg");
         GLuint greenSkin;
-        glGenTextures(1, &greenSkin);
-        glBindTexture(GL_TEXTURE_2D, greenSkin);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinGreenMap->getWidth(), fishSkinGreenMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinGreenMap->getPixels());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        importTexture(fishSkinGreenMap, greenSkin);
 
         std::unique_ptr<Image> fishSkinRedMap = loadImage("../assets/textures/Red.jpg");
         GLuint redSkin;
-        glGenTextures(1, &redSkin);
-        glBindTexture(GL_TEXTURE_2D, redSkin);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinRedMap->getWidth(), fishSkinRedMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinRedMap->getPixels());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        importTexture(fishSkinRedMap, redSkin);
 
         std::unique_ptr<Image> fishSkinPinkMap = loadImage("../assets/textures/Pink.jpg");
         GLuint pinkSkin;
-        glGenTextures(1, &pinkSkin);
-        glBindTexture(GL_TEXTURE_2D, pinkSkin);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinPinkMap->getWidth(), fishSkinPinkMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinPinkMap->getPixels());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        importTexture(fishSkinPinkMap, pinkSkin);
 
         std::unique_ptr<Image> fishSkinCyanMap = loadImage("../assets/textures/Cyan.jpg");
         GLuint cyanSkin;
-        glGenTextures(1, &cyanSkin);
-        glBindTexture(GL_TEXTURE_2D, cyanSkin);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinCyanMap->getWidth(), fishSkinCyanMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinCyanMap->getPixels());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        importTexture(fishSkinCyanMap, cyanSkin);
 
         std::unique_ptr<Image> fishSkinYellowMap = loadImage("../assets/textures/Yellow.jpg");
         GLuint yellowSkin;
-        glGenTextures(1, &yellowSkin);
-        glBindTexture(GL_TEXTURE_2D, yellowSkin);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinYellowMap->getWidth(), fishSkinYellowMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinYellowMap->getPixels());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        importTexture(fishSkinYellowMap, yellowSkin);
 
         std::unique_ptr<Image> fishSkinSilverMap = loadImage("../assets/textures/Silver.jpg");
         GLuint silverSkin;
-        glGenTextures(1, &silverSkin);
-        glBindTexture(GL_TEXTURE_2D, silverSkin);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinSilverMap->getWidth(), fishSkinSilverMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinSilverMap->getPixels());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        importTexture(fishSkinSilverMap, silverSkin);
 
         std::unique_ptr<Image> fishSkinGoldenMap = loadImage("../assets/textures/Gold.jpg");
         GLuint goldenSkin;
-        glGenTextures(1, &goldenSkin);
-        glBindTexture(GL_TEXTURE_2D, goldenSkin);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fishSkinGoldenMap->getWidth(), fishSkinGoldenMap->getHeight(), 0, GL_RGBA, GL_FLOAT, fishSkinGoldenMap->getPixels());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        importTexture(fishSkinGoldenMap, goldenSkin);
 
         std::unique_ptr<Image> waterMap = loadImage("../assets/textures/waterAlpha.png");
         GLuint water;
-        glGenTextures(1, &water);
-        glBindTexture(GL_TEXTURE_2D, water);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, waterMap->getWidth(), waterMap->getHeight(), 0, GL_RGBA, GL_FLOAT, waterMap->getPixels());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        importTexture(waterMap, water);
 
         std::unique_ptr<Image> leafMap = loadImage("../assets/textures/Leaf.jpg");
         GLuint leafSkin;
-        glGenTextures(1, &leafSkin);
-        glBindTexture(GL_TEXTURE_2D, leafSkin);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, leafMap->getWidth(), leafMap->getHeight(), 0, GL_RGBA, GL_FLOAT, leafMap->getPixels());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        importTexture(LeafMap, leafSkin);
 
         std::unique_ptr<Image> rockMap = loadImage("../assets/textures/Rock.jpg");
         GLuint rockSkin;
-        glGenTextures(1, &rockSkin);
-        glBindTexture(GL_TEXTURE_2D, rockSkin);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rockMap->getWidth(), rockMap->getHeight(), 0, GL_RGBA, GL_FLOAT, rockMap->getPixels());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        importTexture(rockMap, rockSkin);
 
         std::unique_ptr<Image> miniRock1Map = loadImage("../assets/textures/MiniRock1.jpg");
         GLuint miniRock1Skin;
-        glGenTextures(1, &miniRock1Skin);
-        glBindTexture(GL_TEXTURE_2D, miniRock1Skin);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, miniRock1Map->getWidth(), miniRock1Map->getHeight(), 0, GL_RGBA, GL_FLOAT, miniRock1Map->getPixels());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        importTexture(miniRock1Map, miniRock1Skin);
 
         std::unique_ptr<Image> miniRock2Map = loadImage("../assets/textures/MiniRock2.jpg");
         GLuint miniRock2Skin;
-        glGenTextures(1, &miniRock2Skin);
-        glBindTexture(GL_TEXTURE_2D, miniRock2Skin);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, miniRock2Map->getWidth(), miniRock2Map->getHeight(), 0, GL_RGBA, GL_FLOAT, miniRock2Map->getPixels());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        importTexture(miniRock2Map, miniRock2Skin);
 
         std::unique_ptr<Image> miniRock3Map = loadImage("../assets/textures/MiniRock3.jpg");
         GLuint miniRock3Skin;
-        glGenTextures(1, &miniRock3Skin);
-        glBindTexture(GL_TEXTURE_2D, miniRock3Skin);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, miniRock3Map->getWidth(), miniRock3Map->getHeight(), 0, GL_RGBA, GL_FLOAT, miniRock3Map->getPixels());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        importTexture(miniRock3Map, miniRock3Skin);
 
         std::unique_ptr<Image> woodMap = loadImage("../assets/textures/Wood.jpg");
         GLuint woodSkin;
-        glGenTextures(1, &woodSkin);
-        glBindTexture(GL_TEXTURE_2D, woodSkin);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, woodMap->getWidth(), woodMap->getHeight(), 0, GL_RGBA, GL_FLOAT, woodMap->getPixels());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        importTexture(woodMap, woodSkin);
 
 
         // Initialize shaderss

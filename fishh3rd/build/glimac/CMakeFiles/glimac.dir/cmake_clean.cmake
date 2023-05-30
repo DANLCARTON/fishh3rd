@@ -6,6 +6,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/glimac.dir/src/SDLWindowManager.cpp.o"
   "CMakeFiles/glimac.dir/src/Shader.cpp.o"
   "CMakeFiles/glimac.dir/src/Sphere.cpp.o"
+  "CMakeFiles/glimac.dir/src/assets.cpp.o"
   "CMakeFiles/glimac.dir/src/boids.cpp.o"
   "CMakeFiles/glimac.dir/src/fish.cpp.o"
   "CMakeFiles/glimac.dir/src/rock.cpp.o"

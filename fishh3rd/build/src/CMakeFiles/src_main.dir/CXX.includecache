@@ -70,6 +70,14 @@ vector
 common.hpp
 ../glimac/include/glimac/common.hpp
 
+../glimac/include/glimac/assets.hpp
+vector
+-
+glimac/Geometry.hpp
+-
+common.hpp
+../glimac/include/glimac/common.hpp
+
 ../glimac/include/glimac/boids.hpp
 vector
 -
@@ -922,5 +930,7 @@ glimac/rock.hpp
 glimac/boids.hpp
 -
 glimac/walls.hpp
+-
+glimac/assets.hpp
 -
 
