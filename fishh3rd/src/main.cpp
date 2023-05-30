@@ -15,6 +15,7 @@
 #include <math.h>
 #include <SDL/SDL.h>
 #include <glimac/trackBallCamera.hpp>
+#include <glimac/fish.hpp>
 
 //                                                         BEST VALUES
 const unsigned int FISH_NUMBER = 200; //                    peu, entre 10 et 15 ça me semble pas mal ?
@@ -30,53 +31,26 @@ const double WALLS_RADIUS = 20; //                            5
 const double WALLS_STRENGTH = 1; //                        1
 const double SPEED = 0.15; //                                 .15
 
-
-// - - - - - FISH CLASS - - - - - -
-
-
-
 using namespace glimac;
 
-class Fish {
-    private:
+class Rock {
+    public:
         glm::vec3 m_position;
         glm::vec3 m_angle;
-        double m_speed;
-        double m_size;
-        Sphere m_shape;
+        glm::vec3 m_size;
+        Geometry m_shape;
 
-    public:
-        unsigned int id;
+        Rock();
+        Rock(glm::vec3 position, glm::vec3 angle, glm::vec3 size, Geometry shape) : m_position(position), m_angle(angle), m_size(size), m_shape(shape) {}
+        ~Rock() = default;
 
-        Fish();
-        Fish(glm::vec3 position, glm::vec3 angle, double speed, double size, const Sphere &shape, unsigned int id) : m_position(position), m_angle(angle), m_speed(speed), m_size(size), m_shape(shape), id(id) {}
-        ~Fish() = default;
-        
-        glm::vec3 position() {return this->m_position;};
-        void position(glm::vec3 newPosition) {m_position = newPosition;};   
-        glm::vec3 angle() {return this->m_angle;};
-        void angle(glm::vec3 newAngle) {m_angle = newAngle;};
-        double speed() {return this->m_speed;};
-        void speed(double newSpeed) {m_speed = newSpeed;};
-        double size() {return this->m_size;};
-        void size(double newSize) {m_size = newSize;};
-        Sphere shape() {return this->m_shape;};
-        void shape(Sphere newShape) {m_shape = newShape;};
-
-        void move(const SDLWindowManager &wm);
-        void turn(int axis, int dir, double str);
         void draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape, GLuint texture);
-        glm::mat4 getRotationMatrix() const;
 };
 
 // - - - - - - P E T I T E S   F O N C T I O N S - - - - - -
 
 int sign(float value) {
     return value >= 0 ? 1 : -1;
-}
-
-double getAngle(double a, double b) {   
-    return b > 0 ? std::acos(a) : -std::acos(a);
 }
 
 std::vector<Fish> createHerd(const unsigned int fishNumber) {
@@ -95,77 +69,26 @@ std::vector<Fish> createHerd(const unsigned int fishNumber) {
     return fishherd;
 }
 
-void Fish::move(const SDLWindowManager &wm) {
-    // MVMatrix = glm::translate(MVMatrix, this->angle()*(wm.getTime()+1));
-    this->position(this->position()+(this->angle()*glm::vec3(this->speed())));
-    // std::cout << this->position() << this->angle() << std::endl;
+std::vector<Rock> createRocks(std::vector<Geometry> &rockShapes) {
+    std::vector<Rock> rockHerd;
+    rockHerd.push_back(Rock(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.0f, 1.f, 1.f), rockShapes[0]));
+    return rockHerd;
 }
 
-void Fish::turn(int axis, int dir, double str) {
+void Rock::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocation, GLint uNormalMatrixLocation, Geometry shape, GLuint texture) {
 
-    // std::cout << str << std::endl;
-
-    glm::vec3 newAngle;
-
-    if (axis == 0) { // 0, 1, 1 | YZ
-        double angle = getAngle(this->angle()[1], this->angle()[2]);
-        angle += TURN_FACTOR*dir*str;
-        newAngle = glm::vec3(this->angle()[0], std::cos(angle), std::sin(angle));
-    } else if (axis == 1) { // 1, 1, 0 | XY
-        double angle = getAngle(this->angle()[0], this->angle()[1]);
-        angle += TURN_FACTOR*dir*str;
-        newAngle = glm::vec3(std::cos(angle), std::sin(angle), this->angle()[2]);
-    } else if (axis == 2) { // 1, 0, 1 | XZ
-        double angle = getAngle(this->angle()[0], this->angle()[2]);
-        angle += TURN_FACTOR*dir*str;
-        newAngle = glm::vec3(std::cos(angle), this->angle()[1], std::sin(angle));
-    } else {
-        newAngle = glm::vec3(this->angle()[0], this->angle()[1], this->angle()[2]);
-    }
-
-    this->m_angle = newAngle;
-}
-
-void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape, GLuint texture) {
-
-    //std::cout << this->position() << std::endl;
-
-    MVMatrix = glm::scale(MVMatrix, glm::vec3(this->size(), this->size(), this->size()));
-    // MVMatrix            = glm::translate(glm::mat4(1.0f), this->position());
-    MVMatrix = glm::translate(MVMatrix, this->position());
-    glm::mat4 rotMatrix = this->getRotationMatrix();
-    MVMatrix            = MVMatrix * rotMatrix;
-    //MVMatrix = glm::translate(MVMatrix, this->position());
-    //MVMatrix = glm::rotate(MVMatrix, 1.f, this->angle());
+    MVMatrix = glm::scale(MVMatrix, this->m_size);
+    MVMatrix = glm::translate(MVMatrix, this->m_position);
+    MVMatrix = glm::rotate(MVMatrix, 1.f, this->m_angle);
 
     glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
-    glUniformMatrix4fv(uMVProjMatrixLocarion, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
+    glUniformMatrix4fv(uMVProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
     glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));    
-
-    //glDrawArrays(GL_TRIANGLES, 0, this->shape().getVertexCount());
-    //glDrawElements(GL_TRIANGLES, shape.getIndexCount(), GL_UNSIGNED_INT, 0);
-    //glDrawElements(GL_TRIANGLES, shape.getVertexCount(), GL_UNSIGNED_INT, NULL);
     
     glBindTexture(GL_TEXTURE_2D, texture);
         glDrawArrays(GL_TRIANGLE_FAN, 0, shape.getVertexCount());
     glBindTexture(GL_TEXTURE_2D, 0);
 
-}
-
-glm::mat4 Fish::getRotationMatrix() const {
-    glm::vec3 originalVec = {0, 0, -1};
-    glm::vec3 targetVec   = this->m_angle;
-
-    glm::vec3 axis  = glm::cross(originalVec, targetVec);
-    float     angle = glm::acos(glm::dot(originalVec, targetVec) / (glm::length(originalVec) * glm::length(targetVec)));
-
-    glm::mat4 rotMatrix = glm::mat4(1.0f);
-    if (angle != 0 && !glm::isnan(angle))
-    {
-        rotMatrix = glm::rotate(rotMatrix, angle, glm::normalize(axis));
-    }
-
-    return rotMatrix;
 }
 
 double distance(Fish &fish, Fish &otherFish) {
@@ -187,10 +110,10 @@ void separation(Fish &fish, Fish &otherFish) {
     int directionXZ = sign(diffAngle[1]);
 
     if (distanceVec[0] < SEPARATION_RADIUS || distanceVec[1] < SEPARATION_RADIUS) {
-        otherFish.turn(1, directionXY, 1/(dist*SEPARATION_STRENGTH));
+        otherFish.turn(1, directionXY, 1/(dist*SEPARATION_STRENGTH), TURN_FACTOR);
     }
     if (distanceVec[1] < SEPARATION_RADIUS || distanceVec[2] < SEPARATION_RADIUS) {
-        otherFish.turn(2, directionXZ, 1/(dist*SEPARATION_STRENGTH));
+        otherFish.turn(2, directionXZ, 1/(dist*SEPARATION_STRENGTH), TURN_FACTOR);
     }
 }
 
@@ -206,14 +129,14 @@ void alignment(Fish &fish, Fish &otherFish) {
         (SEPARATION_RADIUS < distanceVec[0] && distanceVec[0] < ALIGNMENT_RADIUS) ||
         (SEPARATION_RADIUS < distanceVec[1] && distanceVec[1] < ALIGNMENT_RADIUS)
     ) {
-        otherFish.turn(1, -directionXY, 1/(dist*ALIGNMENT_STRENGTH));
+        otherFish.turn(1, -directionXY, 1/(dist*ALIGNMENT_STRENGTH), TURN_FACTOR);
     }
 
     if (
         (SEPARATION_RADIUS < distanceVec[1] && distanceVec[1] < ALIGNMENT_RADIUS) ||
         (SEPARATION_RADIUS < distanceVec[2] && distanceVec[2] < ALIGNMENT_RADIUS)
     ) {
-        otherFish.turn(2, -directionXZ, 1/(dist*ALIGNMENT_STRENGTH));
+        otherFish.turn(2, -directionXZ, 1/(dist*ALIGNMENT_STRENGTH), TURN_FACTOR);
     }
 }
 
@@ -233,8 +156,8 @@ void cohesion(Fish &fish, std::vector<Fish> &fishherd) {
     averageXYDirection = averageXYDirection/fishesInTheRadius;
     averageXZDirection = averageXZDirection/fishesInTheRadius;
 
-    fish.turn(1, averageXYDirection, COHESION_STRENGTH);
-    fish.turn(2, averageXZDirection, COHESION_STRENGTH);
+    fish.turn(1, averageXYDirection, COHESION_STRENGTH, TURN_FACTOR);
+    fish.turn(2, averageXZDirection, COHESION_STRENGTH, TURN_FACTOR);
 }
 
 // - - - - - - G E S T I O N   D E S   M U R S - - - - - -
@@ -291,11 +214,11 @@ void avoidWall(Fish &wallFish, Fish &fish) {
     int directionXZ = sign(diffAngle[1]);
 
     if ((distanceVec[0] < WALLS_RADIUS) || (distanceVec[1] < WALLS_RADIUS)) {
-        fish.turn(1, -directionXY, 1/(dist*.2*WALLS_STRENGTH));
+        fish.turn(1, -directionXY, 1/(dist*.2*WALLS_STRENGTH), TURN_FACTOR);
     }
 
     if ((distanceVec[1] < WALLS_RADIUS) ||(distanceVec[2] < WALLS_RADIUS)) {
-        fish.turn(2, -directionXZ, 1/(dist*.2*WALLS_STRENGTH));
+        fish.turn(2, -directionXZ, 1/(dist*.2*WALLS_STRENGTH), TURN_FACTOR);
     }
 }
 
@@ -376,11 +299,35 @@ int main(int argc, char** argv) {
     Geometry BGCube;
     BGCube.loadOBJ("../assets/models/cube.obj", "../assets/models/cube.mtl");
 
+    Geometry LeafMesh;
+    LeafMesh.loadOBJ("../assets/models/Leaf.obj", "../assets/models/Leaf.mtl");
+
+    Geometry Rock1Mesh;
+    Rock1Mesh.loadOBJ("../assets/models/Rock1.obj", "../assets/models/Rock1.mtl");
+
+    Geometry Rock2Mesh;
+    Rock2Mesh.loadOBJ("../assets/models/Rock2.obj", "../assets/models/Rock2.mtl");
+
+    Geometry Rock3Mesh;
+    Rock3Mesh.loadOBJ("../assets/models/Rock3.obj", "../assets/models/Rock3.mtl");
+
+    Geometry Rock4Mesh;
+    Rock4Mesh.loadOBJ("../assets/models/Rock4.obj", "../assets/models/Rock4.mtl");
+
+    Geometry MiniRockMesh;
+    MiniRockMesh.loadOBJ("../assets/models/MiniRock.obj", "../assets/models/MiniRock.mtl");
+
+    std::vector<Geometry> rockShapes;
+    rockShapes.push_back(Rock1Mesh);
+    rockShapes.push_back(Rock2Mesh);
+    rockShapes.push_back(Rock3Mesh);
+    rockShapes.push_back(Rock4Mesh);
+
     //std::cout << (0 == -0) << std::endl;
 
     // Initialize SDL and open a window
-    float width  = 960;
-    float height = 960; 
+    float width  = 1280;
+    float height = 720; 
     SDLWindowManager windowManager(width, height, "✨𝐅𝐈𝐒𝐇𝐇𝟑𝐑𝐃✨");
 
     // Initialize glew for OpenGL3+ support
@@ -487,13 +434,66 @@ int main(int argc, char** argv) {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, 0);
 
+        std::unique_ptr<Image> leafMap = loadImage("../assets/textures/Leaf.jpg");
+        GLuint leafSkin;
+        glGenTextures(1, &leafSkin);
+        glBindTexture(GL_TEXTURE_2D, leafSkin);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, leafMap->getWidth(), leafMap->getHeight(), 0, GL_RGBA, GL_FLOAT, leafMap->getPixels());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        std::unique_ptr<Image> rockMap = loadImage("../assets/textures/Rock.jpg");
+        GLuint rockSkin;
+        glGenTextures(1, &rockSkin);
+        glBindTexture(GL_TEXTURE_2D, rockSkin);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rockMap->getWidth(), rockMap->getHeight(), 0, GL_RGBA, GL_FLOAT, rockMap->getPixels());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        std::unique_ptr<Image> miniRock1Map = loadImage("../assets/textures/MiniRock1.jpg");
+        GLuint miniRock1Skin;
+        glGenTextures(1, &miniRock1Skin);
+        glBindTexture(GL_TEXTURE_2D, miniRock1Skin);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, miniRock1Map->getWidth(), miniRock1Map->getHeight(), 0, GL_RGBA, GL_FLOAT, miniRock1Map->getPixels());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        std::unique_ptr<Image> miniRock2Map = loadImage("../assets/textures/MiniRock2.jpg");
+        GLuint miniRock2Skin;
+        glGenTextures(1, &miniRock2Skin);
+        glBindTexture(GL_TEXTURE_2D, miniRock2Skin);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, miniRock2Map->getWidth(), miniRock2Map->getHeight(), 0, GL_RGBA, GL_FLOAT, miniRock2Map->getPixels());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        std::unique_ptr<Image> miniRock3Map = loadImage("../assets/textures/MiniRock3.jpg");
+        GLuint miniRock3Skin;
+        glGenTextures(1, &miniRock3Skin);
+        glBindTexture(GL_TEXTURE_2D, miniRock3Skin);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, miniRock3Map->getWidth(), miniRock3Map->getHeight(), 0, GL_RGBA, GL_FLOAT, miniRock3Map->getPixels());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        std::unique_ptr<Image> woodMap = loadImage("../assets/textures/Wood.jpg");
+        GLuint woodSkin;
+        glGenTextures(1, &woodSkin);
+        glBindTexture(GL_TEXTURE_2D, woodSkin);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, woodMap->getWidth(), woodMap->getHeight(), 0, GL_RGBA, GL_FLOAT, woodMap->getPixels());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
 
         // Initialize shaderss
         FilePath applicationPath(argv[0]);
         Program program = loadProgram(applicationPath.dirPath() + "shaders/3D.vs.glsl",
-                                    //applicationPath.dirPath() + "shaders/tex3D.fs.glsl");
-                                    applicationPath.dirPath() + "shaders/directionallight.fs.glsl");
+                                    applicationPath.dirPath() + "shaders/tex3D.fs.glsl");
+                                    //applicationPath.dirPath() + "shaders/directionallight.fs.glsl");
         program.use();
 
         // Initilize Uniform Variables
@@ -617,12 +617,42 @@ int main(int argc, char** argv) {
 
         glBindVertexArray(0);
 
+        GLuint vao3;
+        glGenVertexArrays(1, &vao3);
+        glBindVertexArray(vao3);
+
+            const GLuint VERTEX_ATTR_POSITION3=0;
+            glEnableVertexAttribArray(VERTEX_ATTR_POSITION3);
+
+            const GLuint VERTEX_ATTR_NORMAL3=1;
+            glEnableVertexAttribArray(VERTEX_ATTR_NORMAL3);
+
+            const GLuint VERTEX_ATTR_TEXTURE3=2;
+            glEnableVertexAttribArray(VERTEX_ATTR_TEXTURE3);
+
+            glBindBuffer(GL_ARRAY_BUFFER,vao3);
+                glVertexAttribPointer(VERTEX_ATTR_POSITION3, 
+                    3, GL_FLOAT, GL_FALSE, 
+                    sizeof(Geometry::Vertex),0);
+                glVertexAttribPointer(VERTEX_ATTR_NORMAL3,
+                    3, GL_FLOAT, GL_FALSE, 
+                    sizeof(Geometry::Vertex),(void*) (sizeof(glm::vec3)));
+                glVertexAttribPointer(VERTEX_ATTR_TEXTURE3,
+                    2, GL_FLOAT, GL_FALSE, 
+                    sizeof(Geometry::Vertex),(void*) (2*sizeof(glm::vec3)));
+            glBindBuffer(GL_ARRAY_BUFFER,0);
+
+        glBindVertexArray(0);
+
         
     /*********************************/
 
     // création des fishes
     std::vector<Fish> fishherd = createHerd(FISH_NUMBER);
     Fish playerFish = Fish(glm::vec3(0), glm::vec3(0, 0, -1), .15, .4, Sphere(1, 32, 16), 10000);
+
+    // création des décors
+    std::vector<Rock> rockHerd = createRocks(rockShapes);
 
     // création de la caméra
     Camera camera = Camera();
@@ -713,11 +743,11 @@ int main(int argc, char** argv) {
                 glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
                 glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
 
-                glUniform3fv(uKdLocation, 1, glm::value_ptr(glm::vec3(0.f, 0.f, 0.f)));
-                glUniform3fv(uKsLocation, 1, glm::value_ptr(glm::vec3(0.f, 0.f, 1.f)));
+                glUniform3fv(uKdLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
+                glUniform3fv(uKsLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
                 glUniform1f(uShininessLocation, 1.f);
-                glUniform3fv(uLightDir_vsLocation, 1, glm::value_ptr(glm::vec4(0.f, 0.f, 0.f, 1.f)*viewMatrix));
-                glUniform3fv(uLightIntensityLocation, 1, glm::value_ptr(glm::vec3(0.f, 0.f, 1.f)));
+                glUniform3fv(uLightDir_vsLocation, 1, glm::value_ptr(glm::vec4(0.f, -1.f, 0.f, 1.f)*viewMatrix));
+                glUniform3fv(uLightIntensityLocation, 1, glm::value_ptr(glm::vec3(1.f, 1.f, 1.f)));
 
                 for (Fish &fish : fishherd) {
 
@@ -780,7 +810,7 @@ int main(int argc, char** argv) {
 
 
                 glBindTexture(GL_TEXTURE_2D, water);
-                    glDrawArrays(GL_LINES, 0, BGCube.getVertexCount());       
+                    glDrawArrays(GL_LINES, 0, BGCube.getVertexCount());
                     MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
                     MVMatrix = glm::scale(MVMatrix, glm::vec3(10.f, 10.f, 10.f));
                     MVMatrix = glm::rotate(MVMatrix, glm::radians(90.0f), glm::vec3(0.f, 0.f, 1.f));
@@ -792,7 +822,29 @@ int main(int argc, char** argv) {
                 glBindTexture(GL_TEXTURE_2D, 0);
             glBindVertexArray(0);
 
+            glBindVertexArray(vao3);
 
+                MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
+
+                glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+                glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
+                glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+
+                glUniform3fv(uKdLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
+                glUniform3fv(uKsLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
+                glUniform1f(uShininessLocation, 1.f);
+                glUniform3fv(uLightDir_vsLocation, 1, glm::value_ptr(glm::vec4(0.f, -1.f, 0.f, 1.f)*viewMatrix));
+                glUniform3fv(uLightIntensityLocation, 1, glm::value_ptr(glm::vec3(1.f, 1.f, 1.f)));
+
+                for (Rock &rock : rockHerd) {
+                    rock.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, rock.m_shape, rockSkin);
+                }
+            glBindVertexArray(0);
+
+
+
+
+                    glDrawArrays(GL_TRIANGLE_FAN, 0, Rock1Mesh.getVertexCount());   
                 // faudra ranger ça un peu mieux
                 // on fera peut-être ça un jour
                 while (windowManager.pollEvent(e)) {
@@ -875,19 +927,19 @@ int main(int argc, char** argv) {
 
                 // par contre ça en vrai ça peut rester là
                 if (moveUp) {
-                    playerFish.turn(0, 1, 10);
+                    playerFish.turn(0, 1, 10, TURN_FACTOR);
                 }
 
                 if (moveDown) {
-                    playerFish.turn(0, -1, 10);
+                    playerFish.turn(0, -1, 10, TURN_FACTOR);
                 }
 
                 if (moveLeft) {
-                    playerFish.turn(2, -1, 10);
+                    playerFish.turn(2, -1, 10, TURN_FACTOR);
                 }
 
                 if (moveRight) {
-                    playerFish.turn(2, 1, 10);
+                    playerFish.turn(2, 1, 10, TURN_FACTOR);
                 }
 
                 if (camFront) {

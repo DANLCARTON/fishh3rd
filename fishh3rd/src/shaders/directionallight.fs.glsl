@@ -16,8 +16,9 @@ uniform vec3 uLightDir_vs;
 uniform vec3 uLightIntensity;
 
 vec3 blinnPhong(){
-    vec3 halfVector = normalize(-fragPosition);
-    vec3 bp = uLightIntensity*(uKd*(dot(normalize(uLightDir_vs), fragColor.rgb))+uKs*pow(dot(halfVector, fragNormal), uShininess));
+    //vec3 halfVector = normalize(-fragPosition);
+    vec3 halfVector = normalize(uLightDir_vs + normalize(-fragPosition));
+    vec3 bp = uLightIntensity*(uKd*(dot(normalize(uLightDir_vs), fragNormal.rgb))+uKs*pow(dot(halfVector, fragNormal), uShininess));
     return bp;
 }
 
