@@ -25,8 +25,8 @@
 #include <glimac/inputs.hpp>
 
 //                                                         BEST VALUES
-const unsigned int FISH_NUMBER = 150; //                    200
-const double AREA = 30.f; //                                    20.f
+const unsigned int FISH_NUMBER = 170;
+const double AREA = 30.f;
 const double TURN_FACTOR = .005; //                         0.01
 const double SEPARATION_RADIUS = 5; //                     10
 const double SEPARATION_STRENGTH = 1; //                    1
@@ -38,6 +38,9 @@ const double WALLS_RADIUS = 20; //                            5
 const double WALLS_STRENGTH = 1; //                        1
 const double SPEED = 0.15; //                                 .15
 const GLenum DRAW_MODE = GL_TRIANGLE_FAN; //               LOD : GL_TRIANGLE_FAN - GL_LINES_STRIP
+const float R_LIGHT = 1.0f;
+const float G_LIGHT = 3.0f;
+const float B_LIGHT = 5.0f;
 
 using namespace glimac;
 
@@ -70,8 +73,8 @@ int main(int argc, char** argv) {
     MiniRockMesh.loadOBJ("../assets/models/MiniRock.obj", "../assets/models/MiniRock.mtl");
 
     // Initialize SDL and open a window
-    float width  = 1280;
-    float height = 720; 
+    float width  = 1600;
+    float height = 900; 
     SDLWindowManager windowManager(width, height, "✨𝐅𝐈𝐒𝐇𝐇𝟑𝐑𝐃✨");
 
     // Initialize glew for OpenGL3+ support
@@ -226,6 +229,14 @@ int main(int argc, char** argv) {
         GLuint vao4;
         createVAOfromIBO(vao4, ibo4);
 
+
+
+        GLuint vbo5;
+        createVBO(vbo, LeafMesh);
+
+        GLuint vao5;
+        createVAO(vao5, vbo5);
+
         
     /*********************************/
 
@@ -235,10 +246,16 @@ int main(int argc, char** argv) {
 
     // création des décors
     std::vector<Rock> rockHerd;
-    rockHerd.push_back(Rock(glm::vec3(6.f, -9.f, 6.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f), Rock1Mesh, vao3_1));
-    rockHerd.push_back(Rock(glm::vec3(2.f, -9.f, -7.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.5f, 1.5f, 1.5f), Rock2Mesh, vao3_2));
-    rockHerd.push_back(Rock(glm::vec3(8.f, -9.f, -4.1f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.5f, 1.5f, 1.5f), Rock3Mesh, vao3_3));
-    rockHerd.push_back(Rock(glm::vec3(6.f, -9.f, -6.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(2.f, 2.5f, 2.f), Rock4Mesh, vao3_4));
+    rockHerd.push_back(Rock(glm::vec3(6.f, -9.f, 6.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.f, 1.f, 1.f), Rock1Mesh, vao3_1));
+    rockHerd.push_back(Rock(glm::vec3(2.f, -9.f, -7.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.5f, 1.5f, 1.5f), Rock2Mesh, vao3_2));
+    rockHerd.push_back(Rock(glm::vec3(8.f, -9.f, -4.1f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.5f, 1.5f, 1.5f), Rock3Mesh, vao3_3));
+    rockHerd.push_back(Rock(glm::vec3(6.f, -9.f, -6.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(2.f, 2.5f, 2.f), Rock4Mesh, vao3_4));
+
+    std::vector<Rock> leafHerd;
+    leafHerd.push_back(Rock(glm::vec3(-5.f, -9.5f, 3.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.8f, 0.8f, 0.8f), LeafMesh, vao5));
+    leafHerd.push_back(Rock(glm::vec3(-2.f, -9.5f, 7.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.5f, 1.5f, 1.5f), LeafMesh, vao5));
+    leafHerd.push_back(Rock(glm::vec3(-8.f, -9.5f, 4.1f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.5f, 1.5f, 1.5f), LeafMesh, vao5));
+    leafHerd.push_back(Rock(glm::vec3(-6.f, -9.5f, 6.f), glm::vec3(4.0f, 1.f, 1.f), glm::vec3(2.f, 2.5f, 2.f), LeafMesh, vao5));
 
     // création de la caméra
     Camera camera = Camera();
@@ -285,8 +302,8 @@ int main(int argc, char** argv) {
                 glUniform3fv(uKdLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
                 glUniform3fv(uKsLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
                 glUniform1f(uShininessLocation, 1.f);
-                glUniform3fv(uLightDir_vsLocation, 1, glm::value_ptr(glm::vec4(0.f, -1.f, 0.f, 1.f)*viewMatrix));
-                glUniform3fv(uLightIntensityLocation, 1, glm::value_ptr(glm::vec3(1.f, 1.f, 1.f)));
+                glUniform3fv(uLightDir_vsLocation, 1, glm::value_ptr(glm::vec4(0.f, 1.f, 0.f, 1.f)));
+                glUniform3fv(uLightIntensityLocation, 1, glm::value_ptr(glm::vec3(R_LIGHT, G_LIGHT, B_LIGHT)));
 
                 for (Fish &fish : fishherd) {
 
@@ -308,13 +325,13 @@ int main(int argc, char** argv) {
                     alignment(playerFish, fish, SEPARATION_RADIUS, ALIGNMENT_RADIUS, ALIGNMENT_STRENGTH, TURN_FACTOR);
                     //wallSeparation(fish, AREA, WALLS_RADIUS, WALLS_STRENGTH, TURN_FACTOR);
                     GLuint texture;
-                    if (fish.id % 7 == 0) texture = blueSkin;
-                    if (fish.id % 7 == 1) texture = greenSkin;
-                    if (fish.id % 7 == 2) texture = redSkin;
-                    if (fish.id % 7 == 3) texture = pinkSkin;
-                    if (fish.id % 7 == 4) texture = cyanSkin;
-                    if (fish.id % 7 == 5) texture = yellowSkin;
-                    if (fish.id % 7 == 6) texture = silverSkin;
+                    if (fish.id % 6 == 0) texture = blueSkin;
+                    if (fish.id % 6 == 1) texture = greenSkin;
+                    if (fish.id % 6 == 2) texture = redSkin;
+                    if (fish.id % 6 == 3) texture = pinkSkin;
+                    if (fish.id % 6 == 4) texture = cyanSkin;
+                    // if (fish.id % 7 == 5) texture = yellowSkin;
+                    if (fish.id % 6 == 5) texture = silverSkin;
                     fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh, texture, DRAW_MODE);
 
                     //std::cout << fish.angle() << std::endl;
@@ -352,11 +369,12 @@ int main(int argc, char** argv) {
 
             // DECOR
 
+            // FAIRE UNE FONCTION GENRE RENDER CUBE
+
             glBindVertexArray(vao4); // Table
                 MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
                 MVMatrix = glm::scale(MVMatrix, glm::vec3(20.f, 1.f, 20.f));
-                MVMatrix = glm::rotate(MVMatrix, glm::radians(180.f), glm::vec3(0.f, 0.f, 1.f));
-                MVMatrix = glm::translate(MVMatrix, glm::vec3(-1.f, 10.f, -1.f));
+                MVMatrix = glm::translate(MVMatrix, glm::vec3(-1.f, -12.2f, -1.f));
 
                 glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
                 glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
@@ -368,44 +386,89 @@ int main(int argc, char** argv) {
                 glBindTexture(GL_TEXTURE_2D, 0);
             glBindVertexArray(0);
 
-            
-
-            glBindVertexArray(vao3_1);
-
+            glBindVertexArray(vao4); // Table
                 MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
+                MVMatrix = glm::scale(MVMatrix, glm::vec3(10.f, 1.f, 10.f));
+                MVMatrix = glm::translate(MVMatrix, glm::vec3(-1.f, -12.f, -1.f));
 
                 glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
                 glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
                 glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
 
-                glUniform3fv(uKdLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
-                glUniform3fv(uKsLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
-                glUniform1f(uShininessLocation, 1.f);
-                glUniform3fv(uLightDir_vsLocation, 1, glm::value_ptr(glm::vec4(0.f, -1.f, 0.f, 1.f)*viewMatrix));
-                glUniform3fv(uLightIntensityLocation, 1, glm::value_ptr(glm::vec3(1.f, 1.f, 1.f)));
-
-                for (Rock &rock : rockHerd) {
-                    rock.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, rock.m_shape, rockSkin);
-                }
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo4);
+                glBindTexture(GL_TEXTURE_2D, miniRock2Skin);
+                    glDrawElements(GL_TRIANGLES, (unsigned int)36, GL_UNSIGNED_INT, 0);
+                glBindTexture(GL_TEXTURE_2D, 0);
             glBindVertexArray(0);
 
-            for (Rock &rock : rockHerd) {
+            glBindVertexArray(vao4); // Table
+                MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
+                MVMatrix = glm::scale(MVMatrix, glm::vec3(11.f, 1.f, 11.f));
+                MVMatrix = glm::translate(MVMatrix, glm::vec3(-1.f, -12.1f, -1.f));
+
+                glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+                glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
+                glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo4);
+                glBindTexture(GL_TEXTURE_2D, miniRock3Skin);
+                    glDrawElements(GL_TRIANGLES, (unsigned int)36, GL_UNSIGNED_INT, 0);
+                glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+
+            glBindVertexArray(vao4); // Table
+                MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
+                MVMatrix = glm::scale(MVMatrix, glm::vec3(11.f, .5f, 11.f));
+                MVMatrix = glm::translate(MVMatrix, glm::vec3(-1.f, 20.f, -1.f));
+
+                glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+                glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
+                glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo4);
+                glBindTexture(GL_TEXTURE_2D, miniRock3Skin);
+                    glDrawElements(GL_TRIANGLES, (unsigned int)36, GL_UNSIGNED_INT, 0);
+                glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+
+
+
+            for (Rock &rock : rockHerd) { // roches
                 glBindVertexArray(rock.m_vao);
 
-                MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
+                    MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
 
-                glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
-                glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
-                glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+                    glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+                    glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
+                    glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
 
-                glUniform3fv(uKdLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
-                glUniform3fv(uKsLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
-                glUniform1f(uShininessLocation, 1.f);
-                glUniform3fv(uLightDir_vsLocation, 1, glm::value_ptr(glm::vec4(0.f, -1.f, 0.f, 1.f)*viewMatrix));
-                glUniform3fv(uLightIntensityLocation, 1, glm::value_ptr(glm::vec3(1.f, 1.f, 1.f)));
+                    glUniform3fv(uKdLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
+                    glUniform3fv(uKsLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
+                    glUniform1f(uShininessLocation, 1.f);
+                    glUniform3fv(uLightDir_vsLocation, 1, glm::value_ptr(glm::vec4(0.f, -1.f, 0.f, 1.f)*viewMatrix));
+                    glUniform3fv(uLightIntensityLocation, 1, glm::value_ptr(glm::vec3(1.f, 1.f, 1.f)));
 
-                rock.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, rock.m_shape, rockSkin);
-            glBindVertexArray(0);
+                    rock.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, rock.m_shape, rockSkin);
+                glBindVertexArray(0);
+            }
+
+            for (Rock &leaf : leafHerd) { // ce qui était sensé être des algues
+                glBindVertexArray(leaf.m_vao);
+
+                    MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
+
+                    glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+                    glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
+                    glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+
+                    glUniform3fv(uKdLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
+                    glUniform3fv(uKsLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
+                    glUniform1f(uShininessLocation, 1.f);
+                    glUniform3fv(uLightDir_vsLocation, 1, glm::value_ptr(glm::vec4(0.f, -1.f, 0.f, 1.f)*viewMatrix));
+                    glUniform3fv(uLightIntensityLocation, 1, glm::value_ptr(glm::vec3(1.f, 1.f, 1.f)));
+
+                    leaf.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, leaf.m_shape, leafSkin);
+                glBindVertexArray(0);
             }
 
         if (e.type != SDL_QUIT) {
