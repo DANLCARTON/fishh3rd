@@ -37,6 +37,7 @@ const double COHESION_STRENGTH = 1; //                        1
 const double WALLS_RADIUS = 20; //                            5
 const double WALLS_STRENGTH = 1; //                        1
 const double SPEED = 0.15; //                                 .15
+const GLenum DRAW_MODE = GL_TRIANGLE_FAN; //               LOD : GL_TRIANGLE_FAN - GL_LINES_STRIP
 
 using namespace glimac;
 
@@ -67,12 +68,6 @@ int main(int argc, char** argv) {
 
     Geometry MiniRockMesh;
     MiniRockMesh.loadOBJ("../assets/models/MiniRock.obj", "../assets/models/MiniRock.mtl");
-
-    std::vector<Geometry> rockShapes;
-    rockShapes.push_back(Rock1Mesh);
-    rockShapes.push_back(Rock2Mesh);
-    rockShapes.push_back(Rock3Mesh);
-    rockShapes.push_back(Rock4Mesh);
 
     // Initialize SDL and open a window
     float width  = 1280;
@@ -199,11 +194,29 @@ int main(int argc, char** argv) {
 
 
 
-        GLuint vbo3; // Roches
-        createVBO(vbo3, Rock1Mesh);
+        GLuint vbo3_1; // Roches
+        createVBO(vbo3_1, Rock1Mesh);
 
-        GLuint vao3;
-        createVAO(vao3, vbo3);
+        GLuint vao3_1;
+        createVAO(vao3_1, vbo3_1);
+
+        GLuint vbo3_2; 
+        createVBO(vbo3_2, Rock2Mesh);
+
+        GLuint vao3_2;
+        createVAO(vao3_2, vbo3_2);
+
+        GLuint vbo3_3; 
+        createVBO(vbo3_3, Rock3Mesh);
+
+        GLuint vao3_3;
+        createVAO(vao3_3, vbo3_3);
+
+        GLuint vbo3_4; 
+        createVBO(vbo3_4, Rock4Mesh);
+
+        GLuint vao3_4;
+        createVAO(vao3_4, vbo3_4);
 
 
 
@@ -221,7 +234,11 @@ int main(int argc, char** argv) {
     Fish playerFish = Fish(glm::vec3(0), glm::vec3(0, 0, -1), .15, .4, Sphere(1, 32, 16), 10000);
 
     // création des décors
-    std::vector<Rock> rockHerd = createRocks(rockShapes);
+    std::vector<Rock> rockHerd;
+    rockHerd.push_back(Rock(glm::vec3(6.f, -9.f, 6.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f), Rock1Mesh, vao3_1));
+    rockHerd.push_back(Rock(glm::vec3(2.f, -9.f, -7.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.5f, 1.5f, 1.5f), Rock2Mesh, vao3_2));
+    rockHerd.push_back(Rock(glm::vec3(8.f, -9.f, -4.1f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.5f, 1.5f, 1.5f), Rock3Mesh, vao3_3));
+    rockHerd.push_back(Rock(glm::vec3(6.f, -9.f, -6.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(2.f, 2.5f, 2.f), Rock4Mesh, vao3_4));
 
     // création de la caméra
     Camera camera = Camera();
@@ -291,14 +308,14 @@ int main(int argc, char** argv) {
                     alignment(playerFish, fish, SEPARATION_RADIUS, ALIGNMENT_RADIUS, ALIGNMENT_STRENGTH, TURN_FACTOR);
                     //wallSeparation(fish, AREA, WALLS_RADIUS, WALLS_STRENGTH, TURN_FACTOR);
                     GLuint texture;
-                    if (fish.id % 6 == 0) texture = blueSkin;
-                    if (fish.id % 6 == 1) texture = greenSkin;
-                    if (fish.id % 6 == 2) texture = redSkin;
-                    if (fish.id % 6 == 3) texture = pinkSkin;
-                    if (fish.id % 6 == 4) texture = cyanSkin;
-                    if (fish.id % 6 == 5) texture = yellowSkin;
-                    //if (fish.id % 7 == 6) texture = silverSkin;
-                    fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh, texture);
+                    if (fish.id % 7 == 0) texture = blueSkin;
+                    if (fish.id % 7 == 1) texture = greenSkin;
+                    if (fish.id % 7 == 2) texture = redSkin;
+                    if (fish.id % 7 == 3) texture = pinkSkin;
+                    if (fish.id % 7 == 4) texture = cyanSkin;
+                    if (fish.id % 7 == 5) texture = yellowSkin;
+                    if (fish.id % 7 == 6) texture = silverSkin;
+                    fish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh, texture, DRAW_MODE);
 
                     //std::cout << fish.angle() << std::endl;
                     //std::cout << fish.position() << std::endl;
@@ -306,7 +323,7 @@ int main(int argc, char** argv) {
 
                 playerFish.move(windowManager);
                 passTrough(playerFish, AREA);
-                playerFish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh, goldenSkin);
+                playerFish.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, FishMesh, goldenSkin, DRAW_MODE);
 
             glBindVertexArray(0);
 
@@ -353,7 +370,7 @@ int main(int argc, char** argv) {
 
             
 
-            glBindVertexArray(vao3);
+            glBindVertexArray(vao3_1);
 
                 MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
 
@@ -371,6 +388,25 @@ int main(int argc, char** argv) {
                     rock.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, rock.m_shape, rockSkin);
                 }
             glBindVertexArray(0);
+
+            for (Rock &rock : rockHerd) {
+                glBindVertexArray(rock.m_vao);
+
+                MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
+
+                glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+                glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
+                glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+
+                glUniform3fv(uKdLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
+                glUniform3fv(uKsLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
+                glUniform1f(uShininessLocation, 1.f);
+                glUniform3fv(uLightDir_vsLocation, 1, glm::value_ptr(glm::vec4(0.f, -1.f, 0.f, 1.f)*viewMatrix));
+                glUniform3fv(uLightIntensityLocation, 1, glm::value_ptr(glm::vec3(1.f, 1.f, 1.f)));
+
+                rock.draw(MVMatrix, ProjMatrix, NormalMatrix, uMVMatrixLocation, uMVPMatrixLocation, uNormalMatrixLocation, rock.m_shape, rockSkin);
+            glBindVertexArray(0);
+            }
 
         if (e.type != SDL_QUIT) {
             SDLinputs(windowManager, TURN_FACTOR, camera, playerFish, e);

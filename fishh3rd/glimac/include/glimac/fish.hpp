@@ -37,7 +37,7 @@ namespace glimac {
 
             void move(const SDLWindowManager &wm);
             void turn(int axis, int dir, double str, double TURN_FACTOR);
-            void draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape, GLuint texture);
+            void draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape, GLuint texture, GLenum DRAW_MODE);
             glm::mat4 getRotationMatrix() const;
     };
 

@@ -54,7 +54,7 @@ glm::mat4 Fish::getRotationMatrix() const {
     return rotMatrix;
 }
 
-void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape, GLuint texture) {
+void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape, GLuint texture, GLenum DRAW_MODE) {
 
     //std::cout << this->position() << std::endl;
 
