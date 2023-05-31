@@ -90,10 +90,7 @@ namespace glimac {
                     camBack = false;
                     break;
             }
-        } else if (e.type == SDL_MOUSEMOTION) {
-            camera.rotateLeft(e.motion.xrel);
-            camera.rotateUp(e.motion.yrel);
-        }
+        } 
 
         // par contre ça en vrai ça peut rester là
         if (moveUp) {

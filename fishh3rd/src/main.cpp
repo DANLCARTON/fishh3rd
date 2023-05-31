@@ -2,6 +2,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 //#include "../glimac/src/tiny_obj_loader.h"
 #include "glm/detail/type_mat.hpp"
+#include <stdexcept>
 #include "glm/gtc/matrix_transform.hpp"
 #include <glimac/SDLWindowManager.hpp>
 #include <GL/glew.h>
@@ -24,7 +25,7 @@
 #include <glimac/inputs.hpp>
 
 //                                                         BEST VALUES
-const unsigned int FISH_NUMBER = 200; //                    peu, entre 10 et 15 ça me semble pas mal ?
+const unsigned int FISH_NUMBER = 150; //                    200
 const double AREA = 30.f; //                                    20.f
 const double TURN_FACTOR = .005; //                         0.01
 const double SEPARATION_RADIUS = 5; //                     10
@@ -45,7 +46,6 @@ int main(int argc, char** argv) {
 
     Geometry FishMesh;
     FishMesh.loadOBJ("../assets/models/Fish2.obj", "../assets/models/Fish2.mtl");
-    //FishMesh.loadOBJ("../assets/models/FishOriented.obj", "../assets/models/FishOriented.mtl");
 
     Geometry BGCube;
     BGCube.loadOBJ("../assets/models/cube.obj", "../assets/models/cube.mtl");
@@ -95,6 +95,7 @@ int main(int argc, char** argv) {
         // Initialize depth test
         // Permet de gérer les différents plans de la scène 
         glEnable(GL_DEPTH_TEST);
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         // textures
         std::unique_ptr<Image> fishSkinBlueMap = loadImage("../assets/textures/Blue.jpg");
@@ -157,6 +158,7 @@ int main(int argc, char** argv) {
         GLuint woodSkin;
         importTexture(woodMap, woodSkin);
 
+        
 
         // Initialize shaderss
         FilePath applicationPath(argv[0]);
@@ -181,7 +183,7 @@ int main(int argc, char** argv) {
 
 
 
-        GLuint vbo;
+        GLuint vbo; // Poissons
         createVBO(vbo, FishMesh);
 
         GLuint vao;
@@ -189,7 +191,7 @@ int main(int argc, char** argv) {
 
 
 
-        GLuint vbo2;
+        GLuint vbo2; // Bordures
         createVBO(vbo2, BGCube);
         
         GLuint vao2;
@@ -197,11 +199,19 @@ int main(int argc, char** argv) {
 
 
 
-        GLuint vbo3;
+        GLuint vbo3; // Roches
         createVBO(vbo3, Rock1Mesh);
 
         GLuint vao3;
         createVAO(vao3, vbo3);
+
+
+
+        GLuint ibo4; // Table
+        createIBO(ibo4, BGCube);
+
+        GLuint vao4;
+        createVAOfromIBO(vao4, ibo4);
 
         
     /*********************************/
@@ -323,6 +333,26 @@ int main(int argc, char** argv) {
                 glBindTexture(GL_TEXTURE_2D, 0);
             glBindVertexArray(0);
 
+            // DECOR
+
+            glBindVertexArray(vao4); // Table
+                MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
+                MVMatrix = glm::scale(MVMatrix, glm::vec3(20.f, 1.f, 20.f));
+                MVMatrix = glm::rotate(MVMatrix, glm::radians(180.f), glm::vec3(0.f, 0.f, 1.f));
+                MVMatrix = glm::translate(MVMatrix, glm::vec3(-1.f, 10.f, -1.f));
+
+                glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
+                glUniformMatrix4fv(uMVPMatrixLocation, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
+                glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));
+
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo4);
+                glBindTexture(GL_TEXTURE_2D, woodSkin);
+                    glDrawElements(GL_TRIANGLES, (unsigned int)36, GL_UNSIGNED_INT, 0);
+                glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+
+            
+
             glBindVertexArray(vao3);
 
                 MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
@@ -342,15 +372,9 @@ int main(int argc, char** argv) {
                 }
             glBindVertexArray(0);
 
-
-
-
-
         if (e.type != SDL_QUIT) {
             SDLinputs(windowManager, TURN_FACTOR, camera, playerFish, e);
         }
-
-        
                 
         /*********************************/
 

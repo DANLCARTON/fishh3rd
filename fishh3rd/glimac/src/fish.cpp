@@ -1,4 +1,5 @@
 #include "glimac/fish.hpp"
+#include <iostream>
 
 namespace glimac {
 
@@ -78,6 +79,8 @@ void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix
     glBindTexture(GL_TEXTURE_2D, 0);
 
 }
+
+
 
 std::vector<Fish> createHerd(const unsigned int fishNumber, double AREA, double SPEED) {
     std::vector<Fish> fishherd;

@@ -919,6 +919,8 @@ detail/func_vector_relational.hpp
 /home/eric/F33/fishh3rd/src/main.cpp
 glm/detail/type_mat.hpp
 /home/eric/F33/fishh3rd/src/glm/detail/type_mat.hpp
+stdexcept
+-
 glm/gtc/matrix_transform.hpp
 /home/eric/F33/fishh3rd/src/glm/gtc/matrix_transform.hpp
 glimac/SDLWindowManager.hpp
