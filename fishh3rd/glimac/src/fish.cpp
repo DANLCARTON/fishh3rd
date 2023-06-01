@@ -75,7 +75,7 @@ void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix
     //glDrawElements(GL_TRIANGLES, shape.getVertexCount(), GL_UNSIGNED_INT, NULL);
     
     glBindTexture(GL_TEXTURE_2D, texture);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, shape.getVertexCount());
+        glDrawArrays(DRAW_MODE, 0, shape.getVertexCount());
     glBindTexture(GL_TEXTURE_2D, 0);
 
 }

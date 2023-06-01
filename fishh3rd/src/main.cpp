@@ -1,11 +1,13 @@
 #define GLM_FORCE_RADIANS
 #define TINYOBJLOADER_IMPLEMENTATION
+#define IMGUI_IMPL_OPENGL_LOADER_SDL
 //#include "../glimac/src/tiny_obj_loader.h"
 #include "glm/detail/type_mat.hpp"
 #include <stdexcept>
 #include "glm/gtc/matrix_transform.hpp"
 #include <glimac/SDLWindowManager.hpp>
 #include <GL/glew.h>
+#include "../imgui/imgui.h"
 #include <iostream>
 #include <glimac/common.hpp>
 #include <glimac/Sphere.hpp>
@@ -27,20 +29,20 @@
 //                                                         BEST VALUES
 const unsigned int FISH_NUMBER = 170;
 const double AREA = 30.f;
-const double TURN_FACTOR = .005; //                         0.01
-const double SEPARATION_RADIUS = 5; //                     10
-const double SEPARATION_STRENGTH = 1; //                    1
-const double ALIGNMENT_RADIUS = 10; //                      10
-const double ALIGNMENT_STRENGTH = 1; //                       1
-const double COHESION_RADIUS = 15; //                     15
-const double COHESION_STRENGTH = 1; //                        1
+double TURN_FACTOR = .005; //                         0.01
+double SEPARATION_RADIUS = 5; //                     10
+double SEPARATION_STRENGTH = 1; //                    1
+double ALIGNMENT_RADIUS = 10; //                      10
+double ALIGNMENT_STRENGTH = 1; //                       1
+double COHESION_RADIUS = 15; //                     15
+double COHESION_STRENGTH = 1; //                        1
 const double WALLS_RADIUS = 20; //                            5
 const double WALLS_STRENGTH = 1; //                        1
-const double SPEED = 0.15; //                                 .15
-const GLenum DRAW_MODE = GL_TRIANGLE_FAN; //               LOD : GL_TRIANGLE_FAN - GL_LINES_STRIP
-const float R_LIGHT = 1.0f;
-const float G_LIGHT = 3.0f;
-const float B_LIGHT = 5.0f;
+double SPEED = 0.15; //                                 .15
+GLenum DRAW_MODE = GL_TRIANGLE_FAN; //               LOD : GL_TRIANGLE_FAN - GL_LINES_STRIP
+float R_LIGHT = 1.0f;
+float G_LIGHT = 3.0f;
+float B_LIGHT = 5.0f;
 
 using namespace glimac;
 
@@ -73,7 +75,7 @@ int main(int argc, char** argv) {
     MiniRockMesh.loadOBJ("../assets/models/MiniRock.obj", "../assets/models/MiniRock.mtl");
 
     // Initialize SDL and open a window
-    float width  = 1600;
+    float width  = 1100;
     float height = 900; 
     SDLWindowManager windowManager(width, height, "✨𝐅𝐈𝐒𝐇𝐇𝟑𝐑𝐃✨");
 
@@ -260,7 +262,14 @@ int main(int argc, char** argv) {
     // création de la caméra
     Camera camera = Camera();
 
-    glm::mat4 vm2 = camera.getViewMatrix();
+    glm::mat4 vm2 = camera.getViewMatrix();    
+    
+    ImGui::CreateContext(); 
+
+    //int windowWidth;
+    //int windowHeight;
+    //SDL_GetWindowSize(windowManager, &windowWidth, &windowHeight);
+    ImGui::GetIO().DisplaySize = ImVec2(static_cast<float>(width), static_cast<float>(height));
 
     // Application loop:
     bool done = false;
@@ -275,6 +284,25 @@ int main(int argc, char** argv) {
 
         /*********************************/
            // RENDERING CODE
+
+           // HUD
+
+            // Début de la frame ImGui
+            /*
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui::NewFrame();
+
+            // Affichage de l'interface utilisateur ImGui
+            ImGui::Begin("aa");
+            // Ajoutez ici vos éléments d'interface utilisateur ImGui
+            ImGui::End();
+
+            // Rendu OpenGL et autres opérations de rendu...
+
+            // Rendu de l'interface utilisateur ImGui
+            ImGui::Render();
+
+            */
 
             // camera
             glm::mat4 viewMatrix = camera.getViewMatrix();
@@ -472,7 +500,9 @@ int main(int argc, char** argv) {
             }
 
         if (e.type != SDL_QUIT) {
-            SDLinputs(windowManager, TURN_FACTOR, camera, playerFish, e);
+
+            SDLinputs(windowManager, TURN_FACTOR, SEPARATION_RADIUS, ALIGNMENT_RADIUS, COHESION_RADIUS, SEPARATION_STRENGTH, ALIGNMENT_STRENGTH, COHESION_STRENGTH, R_LIGHT, G_LIGHT, B_LIGHT, DRAW_MODE, camera, playerFish, e);
+            displayParameters(TURN_FACTOR, SEPARATION_RADIUS, ALIGNMENT_RADIUS, COHESION_RADIUS, SEPARATION_STRENGTH, ALIGNMENT_STRENGTH, COHESION_RADIUS, R_LIGHT, G_LIGHT, B_LIGHT, DRAW_MODE);
         }
                 
         /*********************************/
