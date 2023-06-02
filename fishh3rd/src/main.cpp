@@ -165,6 +165,7 @@ int main(int argc, char** argv) {
         Program program = loadProgram(applicationPath.dirPath() + "shaders/3D.vs.glsl",
                                     applicationPath.dirPath() + "shaders/tex3D.fs.glsl");
                                     //applicationPath.dirPath() + "shaders/directionallight.fs.glsl");
+                                    //applicationPath.dirPath() + "shaders/pointlight.fs.glsl");
         program.use();
 
         // Initilize Uniform Variables
@@ -179,7 +180,9 @@ int main(int argc, char** argv) {
         GLint uKsLocation = glGetUniformLocation(program.getGLId(), "uKs");
         GLint uShininessLocation = glGetUniformLocation(program.getGLId(), "uShininess");
         GLint uLightDir_vsLocation = glGetUniformLocation(program.getGLId(), "uLightDir_vs");
+        GLint uLightPos_vsLocation = glGetUniformLocation(program.getGLId(), "uLightPos_vs");
         GLint uLightIntensityLocation = glGetUniformLocation(program.getGLId(), "uLightIntensity");
+        GLint uLightPosIntensityLocation = glGetUniformLocation(program.getGLId(), "uLightPosIntensity");
 
 
 
@@ -260,9 +263,7 @@ int main(int argc, char** argv) {
     leafHerd.push_back(Rock(glm::vec3(-6.f, -9.5f, 6.f), glm::vec3(4.0f, 1.f, 1.f), glm::vec3(2.f, 2.5f, 2.f), LeafMesh, vao5));
 
     // création de la caméra
-    Camera camera = Camera();
-
-    glm::mat4 vm2 = camera.getViewMatrix();    
+    Camera camera = Camera();  
     
     ImGui::CreateContext(); 
 
@@ -319,7 +320,7 @@ int main(int argc, char** argv) {
                     // View angle, ratio width/height, nearest depth, furthest depth
                 // glm::mat4 MVMatrix = glm::translate(glm::mat4(glm::vec4(1,0,0,0),glm::vec4(0,1,0,0),glm::vec4(0,0,1,0),glm::vec4(0,0,0,1)), glm::vec3(0,0,-5));
                 
-                glm::mat4 MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)) * viewMatrix;
+                glm::mat4 MVMatrix = glm::lookAt(glm::vec3(0, 0, camera.getDistance()), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0))*viewMatrix;
                     // On voit du coté négatif des Z par défaut en OpenGL
                 glm::mat4 NormalMatrix = glm::transpose(glm::inverse(MVMatrix));
 
@@ -331,7 +332,9 @@ int main(int argc, char** argv) {
                 glUniform3fv(uKsLocation, 1, glm::value_ptr(glm::vec3(1.f, 0.5f, 0.2f)));
                 glUniform1f(uShininessLocation, 1.f);
                 glUniform3fv(uLightDir_vsLocation, 1, glm::value_ptr(glm::vec4(0.f, 1.f, 0.f, 1.f)));
+                glUniform3fv(uLightPos_vsLocation, 1, glm::value_ptr(glm::scale(viewMatrix, glm::vec3(playerFish.size()))*glm::vec4(playerFish.position(), 1.f)));
                 glUniform3fv(uLightIntensityLocation, 1, glm::value_ptr(glm::vec3(R_LIGHT, G_LIGHT, B_LIGHT)));
+                glUniform3fv(uLightPosIntensityLocation, 1, glm::value_ptr(glm::vec3(20.f, 20.f, 40.f)));
 
                 for (Fish &fish : fishherd) {
 
@@ -365,6 +368,8 @@ int main(int argc, char** argv) {
                     //std::cout << fish.angle() << std::endl;
                     //std::cout << fish.position() << std::endl;
                 }
+
+                glUniform1f(uShininessLocation, 10.f);
 
                 playerFish.move(windowManager);
                 passTrough(playerFish, AREA);

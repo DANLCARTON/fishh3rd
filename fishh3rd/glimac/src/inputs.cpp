@@ -161,19 +161,19 @@ namespace glimac {
                     ++COHESION_STRENGTH;
                     break;
                 case SDLK_o:
-                    --R_LIGHT;
+                    if (R_LIGHT >= 1) --R_LIGHT;
                     break;
                 case SDLK_p:
                     ++R_LIGHT;
                     break;
                 case SDLK_l:
-                    --G_LIGHT;
+                    if (G_LIGHT >= 1) --G_LIGHT;
                     break;
                 case SDLK_m:
                     ++G_LIGHT;
                     break;
                 case SDLK_COLON:
-                    --B_LIGHT;
+                    if (B_LIGHT >= 1) --B_LIGHT;
                     break;
                 case SDLK_EXCLAIM:
                     ++B_LIGHT;

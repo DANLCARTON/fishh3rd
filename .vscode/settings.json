@@ -52,5 +52,6 @@
         "random": "cpp",
         "fstream": "cpp",
         "cinttypes": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "/home/eric/F34/fishh3rd"
 }
