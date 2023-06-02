@@ -7,7 +7,7 @@ double getAngle(double a, double b) {
     return b > 0 ? std::acos(a) : -std::acos(a);
 }
 
-void Fish::move(const SDLWindowManager &wm) {
+void Fish::move(const SDLWindowManager &wm) { // à fouchiser
     // MVMatrix = glm::translate(MVMatrix, this->angle()*(wm.getTime()+1));
     this->position(this->position()+(this->angle()*glm::vec3(this->speed())));
     // std::cout << this->position() << this->angle() << std::endl;
@@ -21,7 +21,7 @@ void Fish::turn(int axis, int dir, double str, double TURN_FACTOR) {
 
     if (axis == 0) { // 0, 1, 1 | YZ
         double angle = getAngle(this->angle()[1], this->angle()[2]);
-        angle += TURN_FACTOR*dir*str;
+        angle += TURN_FACTOR*dir*str; // à fouchiser
         newAngle = glm::vec3(this->angle()[0], std::cos(angle), std::sin(angle));
     } else if (axis == 1) { // 1, 1, 0 | XY
         double angle = getAngle(this->angle()[0], this->angle()[1]);
@@ -56,7 +56,7 @@ glm::mat4 Fish::getRotationMatrix() const {
 
 void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape, GLuint texture, GLenum DRAW_MODE) {
 
-    //std::cout << this->position() << std::endl;
+    //std::cout << this->position() << std::endl; // à fouchiser
 
     MVMatrix = glm::scale(MVMatrix, glm::vec3(this->size(), this->size(), this->size()));
     // MVMatrix            = glm::translate(glm::mat4(1.0f), this->position());

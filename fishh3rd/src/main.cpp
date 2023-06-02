@@ -95,7 +95,6 @@ int main(int argc, char** argv) {
         // Initialize depth test
         // Permet de gérer les différents plans de la scène 
         glEnable(GL_DEPTH_TEST);
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         // textures
         std::unique_ptr<Image> fishSkinBlueMap = loadImage("../assets/textures/Blue.jpg");
@@ -164,8 +163,6 @@ int main(int argc, char** argv) {
         FilePath applicationPath(argv[0]);
         Program program = loadProgram(applicationPath.dirPath() + "shaders/3D.vs.glsl",
                                     applicationPath.dirPath() + "shaders/tex3D.fs.glsl");
-                                    //applicationPath.dirPath() + "shaders/directionallight.fs.glsl");
-                                    //applicationPath.dirPath() + "shaders/pointlight.fs.glsl");
         program.use();
 
         // Initilize Uniform Variables
@@ -264,15 +261,7 @@ int main(int argc, char** argv) {
 
     // création de la caméra
     Camera camera = Camera();  
-    
-    ImGui::CreateContext(); 
 
-    //int windowWidth;
-    //int windowHeight;
-    //SDL_GetWindowSize(windowManager, &windowWidth, &windowHeight);
-    ImGui::GetIO().DisplaySize = ImVec2(static_cast<float>(width), static_cast<float>(height));
-
-    // Application loop:
     bool done = false;
     while(!done) {
         // Event loop:
@@ -288,27 +277,8 @@ int main(int argc, char** argv) {
 
            // HUD
 
-            // Début de la frame ImGui
-            /*
-            ImGui_ImplOpenGL3_NewFrame();
-            ImGui::NewFrame();
-
-            // Affichage de l'interface utilisateur ImGui
-            ImGui::Begin("aa");
-            // Ajoutez ici vos éléments d'interface utilisateur ImGui
-            ImGui::End();
-
-            // Rendu OpenGL et autres opérations de rendu...
-
-            // Rendu de l'interface utilisateur ImGui
-            ImGui::Render();
-
-            */
-
             // camera
             glm::mat4 viewMatrix = camera.getViewMatrix();
-
-            // std::cout << viewMatrix << std::endl;
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glClearColor(0.f, 0.f, 0.3f, 1.f);
