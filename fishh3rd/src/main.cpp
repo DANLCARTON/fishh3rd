@@ -27,7 +27,7 @@
 #include <glimac/inputs.hpp>
 
 //                                                         BEST VALUES
-const unsigned int FISH_NUMBER = 170;
+const unsigned int FISH_NUMBER = 200;
 const double AREA = 30.f;
 double TURN_FACTOR = .005; //                         0.01
 double SEPARATION_RADIUS = 5; //                     10
