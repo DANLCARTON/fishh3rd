@@ -7,21 +7,17 @@ double getAngle(double a, double b) {
     return b > 0 ? std::acos(a) : -std::acos(a);
 }
 
-void Fish::move(const SDLWindowManager &wm) { // à fouchiser
-    // MVMatrix = glm::translate(MVMatrix, this->angle()*(wm.getTime()+1));
+void Fish::move(const SDLWindowManager &wm) { 
     this->position(this->position()+(this->angle()*glm::vec3(this->speed())));
-    // std::cout << this->position() << this->angle() << std::endl;
 }
 
 void Fish::turn(int axis, int dir, double str, double TURN_FACTOR) {
-
-    // std::cout << str << std::endl;
 
     glm::vec3 newAngle;
 
     if (axis == 0) { // 0, 1, 1 | YZ
         double angle = getAngle(this->angle()[1], this->angle()[2]);
-        angle += TURN_FACTOR*dir*str; // à fouchiser
+        angle += TURN_FACTOR*dir*str;
         newAngle = glm::vec3(this->angle()[0], std::cos(angle), std::sin(angle));
     } else if (axis == 1) { // 1, 1, 0 | XY
         double angle = getAngle(this->angle()[0], this->angle()[1]);
@@ -56,23 +52,14 @@ glm::mat4 Fish::getRotationMatrix() const {
 
 void Fish::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocarion, GLint uNormalMatrixLocation, Geometry shape, GLuint texture, GLenum DRAW_MODE) {
 
-    //std::cout << this->position() << std::endl; // à fouchiser
-
     MVMatrix = glm::scale(MVMatrix, glm::vec3(this->size(), this->size(), this->size()));
-    // MVMatrix            = glm::translate(glm::mat4(1.0f), this->position());
     MVMatrix = glm::translate(MVMatrix, this->position());
     glm::mat4 rotMatrix = this->getRotationMatrix();
-    MVMatrix            = MVMatrix * rotMatrix;
-    //MVMatrix = glm::translate(MVMatrix, this->position());
-    //MVMatrix = glm::rotate(MVMatrix, 1.f, this->angle());
+    MVMatrix = MVMatrix * rotMatrix;
 
     glUniformMatrix4fv(uMVMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVMatrix));
     glUniformMatrix4fv(uMVProjMatrixLocarion, 1, GL_FALSE, glm::value_ptr(ProjMatrix*MVMatrix));
     glUniformMatrix4fv(uNormalMatrixLocation, 1, GL_FALSE, glm::value_ptr(NormalMatrix));    
-
-    //glDrawArrays(GL_TRIANGLES, 0, this->shape().getVertexCount());
-    //glDrawElements(GL_TRIANGLES, shape.getIndexCount(), GL_UNSIGNED_INT, 0);
-    //glDrawElements(GL_TRIANGLES, shape.getVertexCount(), GL_UNSIGNED_INT, NULL);
     
     glBindTexture(GL_TEXTURE_2D, texture);
         glDrawArrays(DRAW_MODE, 0, shape.getVertexCount());
@@ -86,14 +73,10 @@ std::vector<Fish> createHerd(const unsigned int fishNumber, double AREA, double 
     std::vector<Fish> fishherd;
     for (unsigned int i = 0; i < fishNumber; ++i) {
         double size = .4;
-        // glm::vec3 position = glm::vec3(glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size), glm::linearRand(-1.f/size, 1.f/size));
         glm::vec3 position = glm::vec3(glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA), glm::linearRand(-AREA, AREA));
-        // std::cout << position << std::endl;
-        // glm::vec3 angle = glm::vec3(glm::sphericalRand(1.f));
         glm::vec3 angle = glm::vec3(0, 0, -1);
         double speed = SPEED;
-        Sphere shape = Sphere(1.f, 32, 16);
-        fishherd.push_back(Fish(position, angle, speed, size, shape, i));
+        fishherd.push_back(Fish(position, angle, speed, size, i));
     }
     return fishherd;
 }

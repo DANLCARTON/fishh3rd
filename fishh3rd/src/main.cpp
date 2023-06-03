@@ -269,7 +269,7 @@ int main(int argc, char** argv) {
 
     // création des fishes
     std::vector<Fish> fishherd = createHerd(FISH_NUMBER, AREA, SPEED);
-    Fish playerFish = Fish(glm::vec3(0), glm::vec3(0, 0, -1), .15, .4, Sphere(1, 32, 16), 10000);
+    Fish playerFish = Fish(glm::vec3(0), glm::vec3(0, 0, -1), .15, .4, 10000);
 
     // création des décors
     std::vector<Element> elementsHerd;

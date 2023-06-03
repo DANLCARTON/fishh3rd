@@ -67,7 +67,7 @@ void wall(Fish &fish, double distance, const int wall, double AREA, double WALLS
     Fish wallFish = Fish(
         glm::vec3(fish.position()),
         glm::vec3(0),
-        0, 0, Sphere(0, 0, 0), 1000
+        0, 0, 1000
     );
     if (wall == 1) {
         wallFish.position(glm::vec3(AREA, fish.position()[1], fish.position()[2]));

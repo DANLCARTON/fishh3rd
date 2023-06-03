@@ -15,13 +15,12 @@ namespace glimac {
             glm::vec3 m_angle;
             double m_speed;
             double m_size;
-            Sphere m_shape;
 
         public:
             unsigned int id;
 
             Fish();
-            Fish(glm::vec3 position, glm::vec3 angle, double speed, double size, const Sphere &shape, unsigned int id) : m_position(position), m_angle(angle), m_speed(speed), m_size(size), m_shape(shape), id(id) {}
+            Fish(glm::vec3 position, glm::vec3 angle, double speed, double size, unsigned int id) : m_position(position), m_angle(angle), m_speed(speed), m_size(size), id(id) {}
             ~Fish() = default;
             
             glm::vec3 position() {return this->m_position;};
@@ -32,8 +31,6 @@ namespace glimac {
             void speed(double newSpeed) {m_speed = newSpeed;};
             double size() {return this->m_size;};
             void size(double newSize) {m_size = newSize;};
-            Sphere shape() {return this->m_shape;};
-            void shape(Sphere newShape) {m_shape = newShape;};
 
             void move(const SDLWindowManager &wm);
             void turn(int axis, int dir, double str, double TURN_FACTOR);
