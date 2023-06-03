@@ -15,7 +15,6 @@ namespace glimac {
         
         glBindTexture(GL_TEXTURE_2D, texture);
             glDrawArrays(GL_TRIANGLE_FAN, 1, shape.getVertexCount());
-            //glDrawArrays(GL_LINE_STRIP, 1, shape.getVertexCount());
         glBindTexture(GL_TEXTURE_2D, 0);
 
     }
