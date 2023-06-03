@@ -209,10 +209,24 @@ glimac/CMakeFiles/glimac.dir/src/boids.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/glimac.dir/src/boids.cpp.s"
 	cd /home/eric/F34/fishh3rd/build/glimac && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/eric/F34/fishh3rd/glimac/src/boids.cpp -o CMakeFiles/glimac.dir/src/boids.cpp.s
 
+glimac/CMakeFiles/glimac.dir/src/element.cpp.o: glimac/CMakeFiles/glimac.dir/flags.make
+glimac/CMakeFiles/glimac.dir/src/element.cpp.o: /home/eric/F34/fishh3rd/glimac/src/element.cpp
+glimac/CMakeFiles/glimac.dir/src/element.cpp.o: glimac/CMakeFiles/glimac.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/eric/F34/fishh3rd/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object glimac/CMakeFiles/glimac.dir/src/element.cpp.o"
+	cd /home/eric/F34/fishh3rd/build/glimac && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT glimac/CMakeFiles/glimac.dir/src/element.cpp.o -MF CMakeFiles/glimac.dir/src/element.cpp.o.d -o CMakeFiles/glimac.dir/src/element.cpp.o -c /home/eric/F34/fishh3rd/glimac/src/element.cpp
+
+glimac/CMakeFiles/glimac.dir/src/element.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/glimac.dir/src/element.cpp.i"
+	cd /home/eric/F34/fishh3rd/build/glimac && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/eric/F34/fishh3rd/glimac/src/element.cpp > CMakeFiles/glimac.dir/src/element.cpp.i
+
+glimac/CMakeFiles/glimac.dir/src/element.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/glimac.dir/src/element.cpp.s"
+	cd /home/eric/F34/fishh3rd/build/glimac && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/eric/F34/fishh3rd/glimac/src/element.cpp -o CMakeFiles/glimac.dir/src/element.cpp.s
+
 glimac/CMakeFiles/glimac.dir/src/fish.cpp.o: glimac/CMakeFiles/glimac.dir/flags.make
 glimac/CMakeFiles/glimac.dir/src/fish.cpp.o: /home/eric/F34/fishh3rd/glimac/src/fish.cpp
 glimac/CMakeFiles/glimac.dir/src/fish.cpp.o: glimac/CMakeFiles/glimac.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/eric/F34/fishh3rd/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object glimac/CMakeFiles/glimac.dir/src/fish.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/eric/F34/fishh3rd/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object glimac/CMakeFiles/glimac.dir/src/fish.cpp.o"
 	cd /home/eric/F34/fishh3rd/build/glimac && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT glimac/CMakeFiles/glimac.dir/src/fish.cpp.o -MF CMakeFiles/glimac.dir/src/fish.cpp.o.d -o CMakeFiles/glimac.dir/src/fish.cpp.o -c /home/eric/F34/fishh3rd/glimac/src/fish.cpp
 
 glimac/CMakeFiles/glimac.dir/src/fish.cpp.i: cmake_force
@@ -226,7 +240,7 @@ glimac/CMakeFiles/glimac.dir/src/fish.cpp.s: cmake_force
 glimac/CMakeFiles/glimac.dir/src/inputs.cpp.o: glimac/CMakeFiles/glimac.dir/flags.make
 glimac/CMakeFiles/glimac.dir/src/inputs.cpp.o: /home/eric/F34/fishh3rd/glimac/src/inputs.cpp
 glimac/CMakeFiles/glimac.dir/src/inputs.cpp.o: glimac/CMakeFiles/glimac.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/eric/F34/fishh3rd/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object glimac/CMakeFiles/glimac.dir/src/inputs.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/eric/F34/fishh3rd/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object glimac/CMakeFiles/glimac.dir/src/inputs.cpp.o"
 	cd /home/eric/F34/fishh3rd/build/glimac && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT glimac/CMakeFiles/glimac.dir/src/inputs.cpp.o -MF CMakeFiles/glimac.dir/src/inputs.cpp.o.d -o CMakeFiles/glimac.dir/src/inputs.cpp.o -c /home/eric/F34/fishh3rd/glimac/src/inputs.cpp
 
 glimac/CMakeFiles/glimac.dir/src/inputs.cpp.i: cmake_force
@@ -236,20 +250,6 @@ glimac/CMakeFiles/glimac.dir/src/inputs.cpp.i: cmake_force
 glimac/CMakeFiles/glimac.dir/src/inputs.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/glimac.dir/src/inputs.cpp.s"
 	cd /home/eric/F34/fishh3rd/build/glimac && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/eric/F34/fishh3rd/glimac/src/inputs.cpp -o CMakeFiles/glimac.dir/src/inputs.cpp.s
-
-glimac/CMakeFiles/glimac.dir/src/rock.cpp.o: glimac/CMakeFiles/glimac.dir/flags.make
-glimac/CMakeFiles/glimac.dir/src/rock.cpp.o: /home/eric/F34/fishh3rd/glimac/src/rock.cpp
-glimac/CMakeFiles/glimac.dir/src/rock.cpp.o: glimac/CMakeFiles/glimac.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/eric/F34/fishh3rd/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object glimac/CMakeFiles/glimac.dir/src/rock.cpp.o"
-	cd /home/eric/F34/fishh3rd/build/glimac && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT glimac/CMakeFiles/glimac.dir/src/rock.cpp.o -MF CMakeFiles/glimac.dir/src/rock.cpp.o.d -o CMakeFiles/glimac.dir/src/rock.cpp.o -c /home/eric/F34/fishh3rd/glimac/src/rock.cpp
-
-glimac/CMakeFiles/glimac.dir/src/rock.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/glimac.dir/src/rock.cpp.i"
-	cd /home/eric/F34/fishh3rd/build/glimac && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/eric/F34/fishh3rd/glimac/src/rock.cpp > CMakeFiles/glimac.dir/src/rock.cpp.i
-
-glimac/CMakeFiles/glimac.dir/src/rock.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/glimac.dir/src/rock.cpp.s"
-	cd /home/eric/F34/fishh3rd/build/glimac && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/eric/F34/fishh3rd/glimac/src/rock.cpp -o CMakeFiles/glimac.dir/src/rock.cpp.s
 
 glimac/CMakeFiles/glimac.dir/src/tiny_obj_loader.cpp.o: glimac/CMakeFiles/glimac.dir/flags.make
 glimac/CMakeFiles/glimac.dir/src/tiny_obj_loader.cpp.o: /home/eric/F34/fishh3rd/glimac/src/tiny_obj_loader.cpp
@@ -305,9 +305,9 @@ glimac_OBJECTS = \
 "CMakeFiles/glimac.dir/src/VAO_VBO.cpp.o" \
 "CMakeFiles/glimac.dir/src/assets.cpp.o" \
 "CMakeFiles/glimac.dir/src/boids.cpp.o" \
+"CMakeFiles/glimac.dir/src/element.cpp.o" \
 "CMakeFiles/glimac.dir/src/fish.cpp.o" \
 "CMakeFiles/glimac.dir/src/inputs.cpp.o" \
-"CMakeFiles/glimac.dir/src/rock.cpp.o" \
 "CMakeFiles/glimac.dir/src/tiny_obj_loader.cpp.o" \
 "CMakeFiles/glimac.dir/src/trackBallCamera.cpp.o" \
 "CMakeFiles/glimac.dir/src/walls.cpp.o"
@@ -325,9 +325,9 @@ glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/Sphere.cpp.o
 glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/VAO_VBO.cpp.o
 glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/assets.cpp.o
 glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/boids.cpp.o
+glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/element.cpp.o
 glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/fish.cpp.o
 glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/inputs.cpp.o
-glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/rock.cpp.o
 glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/tiny_obj_loader.cpp.o
 glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/trackBallCamera.cpp.o
 glimac/libglimac.a: glimac/CMakeFiles/glimac.dir/src/walls.cpp.o

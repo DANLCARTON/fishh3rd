@@ -1,9 +1,9 @@
-#include "glimac/rock.hpp"
+#include "glimac/element.hpp"
 #include <iostream>
 
 namespace glimac {
 
-    void Rock::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocation, GLint uNormalMatrixLocation, Geometry shape, GLuint texture) {
+    void Element::draw(glm::mat4 MVMatrix, glm::mat4 ProjMatrix, glm::mat4 NormalMatrix, GLint uMVMatrixLocation, GLint uMVProjMatrixLocation, GLint uNormalMatrixLocation, Geometry shape, GLuint texture) {
 
         MVMatrix = glm::translate(MVMatrix, this->m_position);
         MVMatrix = glm::scale(MVMatrix, this->m_size);

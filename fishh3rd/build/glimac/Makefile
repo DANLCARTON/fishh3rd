@@ -370,6 +370,30 @@ src/boids.cpp.s:
 	cd /home/eric/F34/fishh3rd/build && $(MAKE) $(MAKESILENT) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/boids.cpp.s
 .PHONY : src/boids.cpp.s
 
+src/element.o: src/element.cpp.o
+.PHONY : src/element.o
+
+# target to build an object file
+src/element.cpp.o:
+	cd /home/eric/F34/fishh3rd/build && $(MAKE) $(MAKESILENT) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/element.cpp.o
+.PHONY : src/element.cpp.o
+
+src/element.i: src/element.cpp.i
+.PHONY : src/element.i
+
+# target to preprocess a source file
+src/element.cpp.i:
+	cd /home/eric/F34/fishh3rd/build && $(MAKE) $(MAKESILENT) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/element.cpp.i
+.PHONY : src/element.cpp.i
+
+src/element.s: src/element.cpp.s
+.PHONY : src/element.s
+
+# target to generate assembly for a file
+src/element.cpp.s:
+	cd /home/eric/F34/fishh3rd/build && $(MAKE) $(MAKESILENT) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/element.cpp.s
+.PHONY : src/element.cpp.s
+
 src/fish.o: src/fish.cpp.o
 .PHONY : src/fish.o
 
@@ -417,30 +441,6 @@ src/inputs.s: src/inputs.cpp.s
 src/inputs.cpp.s:
 	cd /home/eric/F34/fishh3rd/build && $(MAKE) $(MAKESILENT) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/inputs.cpp.s
 .PHONY : src/inputs.cpp.s
-
-src/rock.o: src/rock.cpp.o
-.PHONY : src/rock.o
-
-# target to build an object file
-src/rock.cpp.o:
-	cd /home/eric/F34/fishh3rd/build && $(MAKE) $(MAKESILENT) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/rock.cpp.o
-.PHONY : src/rock.cpp.o
-
-src/rock.i: src/rock.cpp.i
-.PHONY : src/rock.i
-
-# target to preprocess a source file
-src/rock.cpp.i:
-	cd /home/eric/F34/fishh3rd/build && $(MAKE) $(MAKESILENT) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/rock.cpp.i
-.PHONY : src/rock.cpp.i
-
-src/rock.s: src/rock.cpp.s
-.PHONY : src/rock.s
-
-# target to generate assembly for a file
-src/rock.cpp.s:
-	cd /home/eric/F34/fishh3rd/build && $(MAKE) $(MAKESILENT) -f glimac/CMakeFiles/glimac.dir/build.make glimac/CMakeFiles/glimac.dir/src/rock.cpp.s
-.PHONY : src/rock.cpp.s
 
 src/tiny_obj_loader.o: src/tiny_obj_loader.cpp.o
 .PHONY : src/tiny_obj_loader.o
@@ -553,15 +553,15 @@ help:
 	@echo "... src/boids.o"
 	@echo "... src/boids.i"
 	@echo "... src/boids.s"
+	@echo "... src/element.o"
+	@echo "... src/element.i"
+	@echo "... src/element.s"
 	@echo "... src/fish.o"
 	@echo "... src/fish.i"
 	@echo "... src/fish.s"
 	@echo "... src/inputs.o"
 	@echo "... src/inputs.i"
 	@echo "... src/inputs.s"
-	@echo "... src/rock.o"
-	@echo "... src/rock.i"
-	@echo "... src/rock.s"
 	@echo "... src/tiny_obj_loader.o"
 	@echo "... src/tiny_obj_loader.i"
 	@echo "... src/tiny_obj_loader.s"
